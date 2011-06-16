@@ -1,0 +1,8 @@
+.buildpath
+.project
+.settings/
+.idea/
+build/
+phpdoc.dist.ini
+phpdoc.ini
+doc/html/
