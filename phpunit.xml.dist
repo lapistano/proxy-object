@@ -4,7 +4,7 @@
     bootstrap="bootstrap.php" 
 >
     <testsuites>
-        <testsuite name="ProxyObject Coaching Unittest Suite">
+        <testsuite name="ProxyObject Test Suite">
             <directory>Tests</directory>
         </testsuite>
     </testsuites>
