@@ -27,8 +27,8 @@ To do so use just create a new ProxyBuilder object and pass the method to be exp
 
     $proxiedObject = $proxy
         ->getProxyBuilder('myClass')
-        ->setConstructorAgrs(array('Argument1', 'Argument2')
-        ->setMethods(array('myMethod')
+        ->setConstructorAgrs(array('Argument1', 'Argument2'))
+        ->setMethods(array('myMethod'))
         ->getProxy();
 
     // invoke proxied method
@@ -47,7 +47,7 @@ Use the `setProperties()` method to archieve.
 
     $proxiedObject = $proxy
         ->getProxyBuilder('myClass')
-        ->setProperties(array('myMember')
+        ->setProperties(array('myMember'))
         ->getProxy();
 
     // invoke proxied method
