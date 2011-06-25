@@ -26,13 +26,9 @@ To do so use just create a new ProxyBuilder object and pass the method to be exp
     // generate and configure proxied object
 
     $proxiedObject = $proxy
-
         ->getProxyBuilder('myClass')
-
         ->setConstructorAgrs(array('Argument1', 'Argument2')
-
         ->setMethods(array('myMethod')
-
         ->getProxy();
 
     // invoke proxied method
@@ -50,11 +46,8 @@ Use the `setProperties()` method to archieve.
     // generate and configure proxied object
 
     $proxiedObject = $proxy
-
         ->getProxyBuilder('myClass')
-
         ->setProperties(array('myMember')
-
         ->getProxy();
 
     // invoke proxied method
@@ -77,11 +70,8 @@ Therefore I followed the API of PHPunits MockBuilder and added the `disableOrigi
     // generate and configure proxied object
 
     $proxiedObject = $proxy
-
         ->getProxyBuilder('myClass')
-
         ->disableOriginalConstructor()
-
         ->getProxy();
 
     // invoke proxied method
