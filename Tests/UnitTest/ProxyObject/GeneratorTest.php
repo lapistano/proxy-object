@@ -263,6 +263,15 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers \lapistano\ProxyObject\Generator::getInstance
+     * @ticket issue#5
+     * @link https://github.com/lapistano/proxy-object/issues/5
+     */
+    public function testGetInstanceNotInstantiableClass() {
+
+    }
+
     /*************************************************************************/
     /* Dataprovider
     /*************************************************************************/
