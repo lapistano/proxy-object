@@ -574,12 +574,7 @@ class Generator
      */
     protected static function createTemplateObject($file)
     {
-        if (version_compare(\PHPUnit_Runner_Version::id(), '3.5', '>=')) {
-            include_once('Text/Template.php');
-            return new \Text_Template($file);
-        } else {
-            include_once('PHPUnit/Util/Template.php');
-            return new \PHPUnit_Util_Template($file);
-        }
+        include_once('Text/Template.php');
+        return new \Text_Template($file);
     }
 }
