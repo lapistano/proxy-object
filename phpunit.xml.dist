@@ -18,7 +18,7 @@
 
   <filter>
     <whitelist>
-      <directory>ProxyObject</directory>
+      <directory>src/lapistano/ProxyObject</directory>
     </whitelist>
   </filter>
 </phpunit>
