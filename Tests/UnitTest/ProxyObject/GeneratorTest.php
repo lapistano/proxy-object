@@ -109,23 +109,19 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \PHPUnit_Framework_Exception
      * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
     public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethod()
     {
-        try {
-            $expected = array (
-                "namespaceName" => "\lapistano\Tests\ProxyObject"
-            );
+        $expected = array (
+            "namespaceName" => "\lapistano\Tests\ProxyObject"
+        );
 
-            $actual = GeneratorProxy::generateProxy(
-                '\lapistano\Tests\ProxyObject\DummyNS',
-                array('arm')
-            );
-            $this->fail('Expected exception not thrown.');
-        } catch (\PHPUnit_Framework_Exception $e) {
-
-        }
+        $actual = GeneratorProxy::generateProxy(
+            '\lapistano\Tests\ProxyObject\DummyNS',
+            array('arm')
+        );
     }
 
     /**
@@ -143,40 +139,31 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \PHPUnit_Framework_Exception
      * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
     public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionNoProtectedMethods()
     {
-        try {
-            $actual = GeneratorProxy::generateProxy('DummyAllPublic');
-            $this->fail('Expected exception not thrown!');
-        } catch (\PHPUnit_Framework_Exception $e) {
-        }
+        $actual = GeneratorProxy::generateProxy('DummyAllPublic');
     }
 
     /**
+     * @expectedException \PHPUnit_Framework_Exception
      * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
     public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethods()
     {
-        try {
-            $actual = GeneratorProxy::generateProxy('\lapistano\Tests\ProxyObject\DummyNS', array('armsFinal'));
-            $this->fail('Expected exception not thrown!');
-        } catch (\PHPUnit_Framework_Exception $e) {
-        }
+        $actual = GeneratorProxy::generateProxy('\lapistano\Tests\ProxyObject\DummyNS', array('armsFinal'));
     }
 
     /**
+     * @expectedException \PHPUnit_Framework_Exception
      * @dataProvider generateProxyExpectingExceptionDataprovider
      * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
     public function testGenerateProxyExpectingPHPUnit_Framework_Exception($class, $method)
     {
-        try {
-            $actual = GeneratorProxy::generateProxy($class, array($method));
-            $this->fail('Expected exception not thrown!');
-        } catch (\PHPUnit_Framework_Exception $e) {
-        }
+        $actual = GeneratorProxy::generateProxy($class, array($method));
     }
 
     /**
@@ -234,6 +221,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getProxiedPropertiesExceptionDataprovider
+     * @expectedException \PHPUnit_Framework_Exception
      * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
      * @covers \lapistano\ProxyObject\Generator::canProxyProperty
      */
@@ -241,13 +229,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNSwithStatic');
         $proxy = new GeneratorProxy();
-
-        try {
-            $proxy::getProxiedProperties('DummyNS', $class, array($property));
-            $this->fail('Expected exception not thrown!');
-        } catch (\PHPUnit_Framework_Exception $e) {
-        }
-
+        $proxy::getProxiedProperties('DummyNS', $class, array($property));
     }
 
     /**
@@ -258,9 +240,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $class = new \ReflectionClass($className);
         $proxy = new GeneratorProxy();
-
         $this->assertInstanceOf($className, $proxy::getInstance($class));
-
     }
 
     /**
