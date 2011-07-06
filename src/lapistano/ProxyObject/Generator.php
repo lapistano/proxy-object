@@ -169,13 +169,13 @@ class Generator
      * @param \ReflectionMethod $method
      * @return array List of parameters to be passed to the proxied method.
      */
-    public static function getMethodCallParameters($method)
+    protected static function getMethodCallParameters(\ReflectionMethod $method)
     {
         $parameters = array();
         foreach ($method->getParameters() as $i => $parameter) {
             $parameters[] = '$'.$parameter->getName();
         }
-        return join(', ', $parameters);
+        return $parameters;
     }
 
     /**
@@ -308,31 +308,45 @@ class Generator
     protected static function generateProxiedPropertyDefinition($templateDir, \ReflectionProperty $property,
                                                                 \ReflectionClass $class)
     {
-        $template = self::createTemplateObject(
-            $templateDir . 'proxied_property.tpl'
-        );
-
-        $property->setAccessible(true);
-        $value = $property->getValue(self::getInstance($class));
-
-        if (is_array($value)) {
-            $value = ' = array()';
-        } else if (is_string($value)) {
-            $value = sprintf(' = \'%s\'', $value);
-        } else if (is_object($value)) {
-            $value = '';
-        } else if (is_scalar($value)) {
-            $value = sprintf(' = %f', $value);
-        }
-
+        $template = self::createTemplateObject($templateDir . 'proxied_property.tpl');
         $template->setVar(
             array(
                 'keyword'        => $property->isStatic() ? 'static ' : '',
                 'property_name'  => $property->getName(),
-                'property_value' => $value
-            )
-        );
+                'property_value' => self::getPropertyValueString($property, $class),
+        ));
         return $template->render();
+    }
+
+    /**
+     * Creates the string to be used in the proxy,based on the type of the property value.
+     *
+     * @param \RelectionProperty $property
+     * @param \ReflectionClass $class
+     *
+     * @return string
+     */
+    protected static function getPropertyValueString(\ReflectionProperty $property, \ReflectionClass $class)
+    {
+        $property->setAccessible(true);
+        $value = $property->getValue(self::getInstance($class));
+
+        switch (true) {
+            case (is_array($value)):
+                return ' = array()';
+            case (is_string($value)):
+                return sprintf(' = \'%s\'', $value);
+            case (is_float($value)):
+            case (is_integer($value)):
+                return sprintf(' = %s', $value);
+            case (is_bool($value)):
+                return sprintf(' = %s', ($value === true ? 'true' : 'false'));
+            case (is_object($value)):
+            case (is_resource($value)):
+            default:
+                return '';
+        }
+
     }
 
     /**
@@ -343,6 +357,9 @@ class Generator
      */
     protected static function getInstance(\ReflectionClass $class)
     {
+        if (!$class->isInstantiable()) {
+            return self::getClassStub($class);
+        }
         if ($constructor = $class->getConstructor()) {
             $parameters = $constructor->getParameters();
 
@@ -357,9 +374,7 @@ class Generator
                         $args[] = array();
                         continue;
                     }
-
-                    $classParameter = $parameter->getClass();
-                    if ($classParameter) {
+                    if ($classParameter = $parameter->getClass()) {
                         $args[] = self::getInstance($classParameter);
                         continue;
                     }
@@ -369,6 +384,23 @@ class Generator
             }
         }
         return $class->newInstance();
+    }
+
+    /**
+     * Creates a stub of the given class
+     *
+     * @param \ReflectionClass $class
+     */
+    protected static function getClassStub(\ReflectionClass $class)
+    {
+        $stub = null;
+        if ($class->isInterface()) {
+
+        }
+        if ($class->isAbstract()) {
+
+        }
+        return $stub;
     }
 
     /**
@@ -489,7 +521,7 @@ class Generator
         $template->setVar(
             array(
                 'arguments_declaration' => self::getArgumentDeclaration($method),
-                'arguments' => self::getMethodCallParameters($method),
+                'arguments' => join(', ', self::getMethodCallParameters($method)),
                 'method_name' => $method->getName(),
                 'reference'   => $reference
             )

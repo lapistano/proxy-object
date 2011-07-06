@@ -40,6 +40,34 @@ use lapistano\ProxyObject\Generator;
 class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
 
+    /*************************************************************************/
+    /* Fixtures                                                              */
+    /*************************************************************************/
+
+    /**
+     * Provides a named list of filtered properties from the given class.
+     *
+     * @param string $classname
+     * @param integer $filter
+     * @return array
+     */
+    protected function getPropertiesFromClass(\ReflectionClass $class, $filter = null)
+    {
+        $namedProperties = array();
+
+        $properties = $class->getProperties($filter);
+
+        foreach ($properties as $property) {
+            $namedProperties[$property->getName()] = $property;
+        }
+
+        return $namedProperties;
+    }
+
+    /*************************************************************************/
+    /* Tests                                                                 */
+    /*************************************************************************/
+
     /**
      * @covers \lapistano\ProxyObject\Generator::generate
      */
@@ -94,7 +122,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $proxy = new GeneratorProxy();
         $method = $class->getMethod('getArm');
 
-        $this->assertEquals('$position, $foo', $proxy::getMethodCallParameters($method));
+        $this->assertEquals(array('$position', '$foo'), $proxy::getMethodCallParameters($method));
     }
 
     /**
@@ -256,25 +284,52 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetInstance($className)
     {
-        $class = new \ReflectionClass($className);
         $proxy = new GeneratorProxy();
+        $this->assertInstanceOf($className, $proxy::getInstance(new \ReflectionClass($className)));
+    }
 
-        $this->assertInstanceOf($className, $proxy::getInstance($class));
+    /**
+     * @dataProvider getPropertyValueStringDataProvider
+     * @covers \lapistano\ProxyObject\Generator::getPropertyValueString
+     */
+    public function testGetPropertyValueString($expected, $propertyName)
+    {
+        $class = new \ReflectionClass('\\lapistano\\Tests\\ProxyObject\\DummyNS');
+        $properties = $this->getPropertiesFromClass(
+            $class,
+            \ReflectionMethod::IS_PROTECTED | \ReflectionMethod::IS_PRIVATE
+        );
 
+        $proxy = new GeneratorProxy();
+        $this->assertEquals($expected, $proxy::getPropertyValueString($properties[$propertyName], $class));
     }
 
     /**
      * @covers \lapistano\ProxyObject\Generator::getInstance
-     * @ticket issue#5
+     * @group issue#5
      * @link https://github.com/lapistano/proxy-object/issues/5
      */
     public function testGetInstanceNotInstantiableClass() {
+        $class = new \ReflectionClass('\\DummyWithConstructorAndInterfaceTypeHint');
+        $proxy = new GeneratorProxy();
 
+        $this->assertInstanceOf('\\DummyWithConstructorAndInterfaceTypeHint', $proxy::getInstance($class));
     }
 
     /*************************************************************************/
     /* Dataprovider
     /*************************************************************************/
+
+    public static function getPropertyValueStringDataProvider()
+    {
+        return array(
+            'property type null' => array('', 'myPrivate'),
+            'property type integer' => array(' = 42', 'myInteger'),
+            'property type string' => array(" = 'Tux'", 'myString'),
+            'property type float' => array(' = 3.14159265', 'myFloat'),
+            'property type boolean' => array(' = false', 'myBoolean'),
+        );
+    }
 
     public static function getInstanceDataprovider()
     {
@@ -295,7 +350,8 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             'with constructor' => array(
-                "public \$nervs = array();\npublic \$myPrivate;\n",
+                "public \$nervs = array();\npublic \$myString = 'Tux';\npublic \$myInteger = 42;\n".
+                "public \$myFloat = 3.14159265;\npublic \$myBoolean = false;\npublic \$myPrivate;\n",
                 '\lapistano\Tests\ProxyObject\DummyNS'
             ),
             'without constructor' => array(
@@ -339,6 +395,17 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
 class GeneratorProxy extends \lapistano\ProxyObject\Generator
 {
+
+    public static function getPropertyValueString(\ReflectionProperty $property, \ReflectionClass $class)
+    {
+        return parent::getPropertyValueString($property, $class);
+    }
+
+    public static function getMethodCallParameters(\ReflectionMethod $method)
+    {
+        return parent::getMethodCallParameters($method);
+    }
+
     public static function getProxiedProperties($fullClassName, \ReflectionClass $class, array $properties = null)
     {
         return parent::getProxiedProperties($fullClassName, $class, $properties);
@@ -347,11 +414,6 @@ class GeneratorProxy extends \lapistano\ProxyObject\Generator
     public static function canProxyMethod(\ReflectionMethod $method)
     {
         return parent::canProxyMethod($method);
-    }
-
-    public function reflectMethods(array $methods, \ReflectionClass $class, $originalClassName)
-    {
-        return parent::reflectMethods($methods, $class, $originalClassName);
     }
 
     public static function generateProxy($originalClassName, array $methods = null,

@@ -46,6 +46,14 @@ namespace {
         }
     }
 
+    class DummyWithConstructorAndInterfaceTypeHint
+    {
+        public function __construct(\Countable $items)
+        {
+            return;
+        }
+    }
+
 }
 
 namespace lapistano\Tests\ProxyObject {
@@ -56,6 +64,14 @@ namespace lapistano\Tests\ProxyObject {
         public $arms = array('left' => 'left arm', 'right' => 'right arm');
 
         protected $nervs = array();
+
+        protected $myString = 'Tux';
+
+        protected $myInteger = 42;
+
+        protected $myFloat = 3.14159265;
+
+        protected $myBoolean = false;
 
         private $myPrivate;
 
@@ -122,6 +138,23 @@ namespace lapistano\Tests\ProxyObject {
         protected function &getArm($position, $foo = '')
         {
             return $this->arms[$position];
+        }
+    }
+
+
+    class DummyNSWithConstructorAndInterfaceTypeHint
+    {
+        public function __construct(\Countable $items)
+        {
+            return;
+        }
+    }
+
+    class DummyNSWithConstructor
+    {
+        public function __construct($beastie, array $os, \Dummy $dummy)
+        {
+            return;
         }
     }
 }
