@@ -102,6 +102,22 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
         $proxyDummyNS = $proxy->getProxy($class, $methods);
     }
 
+
+    public function testGetProxyBuilderFormClassWithUninitiableTypeHint()
+    {
+        //DummyWithConstructorAndUninitiableTypeHint
+        $proxy = new ProxyObject();
+        $proxyDummy = $proxy->getProxyBuilder('\\DummyWithConstructorAndUninitiableTypeHint')
+            ->disableOriginalConstructor()
+            ->getProxy();
+        $this->assertEquals('Beastie', $proxyDummy->getMembers('Beastie'));
+        $this->assertEquals('tux', $proxyDummy->myProtected);
+    }
+
+    /*************************************************************************/
+    /* Dataprovider & callbacks
+    /*************************************************************************/
+
     public static function getProxyExpectingPHPUnit_Framework_Exception()
     {
         return array(

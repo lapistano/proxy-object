@@ -232,37 +232,9 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $proxy::getProxiedProperties('DummyNS', $class, array($property));
     }
 
-    /**
-     * @dataProvider getInstanceDataprovider
-     * @covers \lapistano\ProxyObject\Generator::getInstance
-     */
-    public function testGetInstance($className)
-    {
-        $class = new \ReflectionClass($className);
-        $proxy = new GeneratorProxy();
-        $this->assertInstanceOf($className, $proxy::getInstance($class));
-    }
-
-    /**
-     * @covers \lapistano\ProxyObject\Generator::getInstance
-     * @ticket issue#5
-     * @link https://github.com/lapistano/proxy-object/issues/5
-     */
-    public function testGetInstanceNotInstantiableClass() {
-
-    }
-
     /*************************************************************************/
     /* Dataprovider
     /*************************************************************************/
-
-    public static function getInstanceDataprovider()
-    {
-        return array(
-            'class with mandatory args in constructor' => array('\DummyWithConstructor'),
-            'class with no constructor' => array('\Dummy'),
-        );
-    }
 
     public static function getProxiedPropertiesExceptionDataprovider()
     {

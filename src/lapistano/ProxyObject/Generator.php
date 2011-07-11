@@ -313,7 +313,8 @@ class Generator
         );
 
         $property->setAccessible(true);
-        $value = $property->getValue(self::getInstance($class));
+        $properties = $class->getDefaultProperties();
+        $value = $properties[$property->getName()];
 
         if (is_array($value)) {
             $value = ' = array()';
@@ -333,42 +334,6 @@ class Generator
             )
         );
         return $template->render();
-    }
-
-    /**
-     * Creates an instance of the current proxied class.
-     *
-     * @param \ReflectionClass $class
-     * @return object
-     */
-    protected static function getInstance(\ReflectionClass $class)
-    {
-        if ($constructor = $class->getConstructor()) {
-            $parameters = $constructor->getParameters();
-
-            if (!empty($parameters)) {
-                $args = array();
-
-                foreach ($parameters as $parameter) {
-                    if ($parameter->isOptional()) {
-                        continue;
-                    }
-                    if ($parameter->isArray()) {
-                        $args[] = array();
-                        continue;
-                    }
-
-                    $classParameter = $parameter->getClass();
-                    if ($classParameter) {
-                        $args[] = self::getInstance($classParameter);
-                        continue;
-                    }
-                    $args[] = '';
-                }
-                return $class->newInstanceArgs($args);
-            }
-        }
-        return $class->newInstance();
     }
 
     /**

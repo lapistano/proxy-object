@@ -46,6 +46,21 @@ namespace {
         }
     }
 
+    class DummyWithConstructorAndUninitiableTypeHint
+    {
+        protected $myProtected = 'tux';
+
+        public function __construct($beastie, array $os,\Countable $dummy )
+        {
+            return;
+        }
+
+        protected function getMembers($dummy)
+        {
+            return $dummy;
+        }
+    }
+
 }
 
 namespace lapistano\Tests\ProxyObject {
