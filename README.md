@@ -85,15 +85,6 @@ Since there is a exhausting documentation of the API in the source code, I decid
 Use phpDocumentor (http://phpdoc.org) to extract and generate your own documentation. 
 I added a phpdoc.example.ini in the doc/config folder. Follow the instructions in the doc/config/README to setup 
 the generation of the documentation.
-  
-
-Limitations
-===========
-Every powerful library has one limitation. If there is logic in the constructor of the class to be proxied
-depending on the content of a mandatory parameter, the proxy generation will fail due to a not existing value of the 
-constructor parameters. This is because if you want to expose invisible members the Relection API forces you to pass an 
-instance of the class the members shall be opened for. So imagine you verify the content of a parameter to be set, it is 
-not possible to automatically set the content to be verified -the proxy generation will fail.
 
 
  
