@@ -24,7 +24,6 @@ To do so use just create a new ProxyBuilder object and pass the method to be exp
     $proxy = new \lapistano\ProxyObject();
 
     // generate and configure proxied object
-
     $proxiedObject = $proxy
         ->getProxyBuilder('myClass')
         ->setConstructorAgrs(array('Argument1', 'Argument2'))
@@ -32,7 +31,6 @@ To do so use just create a new ProxyBuilder object and pass the method to be exp
         ->getProxy();
 
     // invoke proxied method
-
     $proxieObject->myMethod();
 
 2. Exposing invisible Members
@@ -44,14 +42,12 @@ Use the `setProperties()` method to archieve.
     $proxy = new \lapistano\ProxyObject();
 
     // generate and configure proxied object
-
     $proxiedObject = $proxy
         ->getProxyBuilder('myClass')
         ->setProperties(array('myMember'))
         ->getProxy();
 
-    // invoke proxied method
-
+    // change content proxied member
     $proxieObject->myMember = 'another value';
 
 Despite the fact that it is possible to expose private members by naming them in the setProperties array, generating a proxy object
@@ -68,14 +64,12 @@ Therefore I followed the API of PHPunits MockBuilder and added the `disableOrigi
     $proxy = new \lapistano\ProxyObject();
 
     // generate and configure proxied object
-
     $proxiedObject = $proxy
         ->getProxyBuilder('myClass')
         ->disableOriginalConstructor()
         ->getProxy();
 
-    // invoke proxied method
-
+    // change value of proxied member
     $proxieObject->myMember = 'another value';
 
 
@@ -85,6 +79,3 @@ Since there is a exhausting documentation of the API in the source code, I decid
 Use phpDocumentor (http://phpdoc.org) to extract and generate your own documentation. 
 I added a phpdoc.example.ini in the doc/config folder. Follow the instructions in the doc/config/README to setup 
 the generation of the documentation.
-
-
- 
