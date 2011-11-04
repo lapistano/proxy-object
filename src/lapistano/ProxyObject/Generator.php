@@ -317,7 +317,7 @@ class Generator
         $value = $properties[$property->getName()];
 
         if (is_array($value)) {
-            $value = ' = array()';
+            $value = sprintf(' = array(%s)', empty($value) ? '' : "'".implode("', '", $value) ."'");
         } else if (is_string($value)) {
             $value = sprintf(' = \'%s\'', $value);
         } else if (is_object($value)) {

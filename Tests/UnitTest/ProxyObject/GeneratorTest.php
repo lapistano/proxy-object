@@ -48,7 +48,8 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $expected = array(
             'code' => "class DummyProxy extends Dummy\n".
                       "{\n\n".
-                      "public \$nervs = array();\n\n\n".
+                      "public \$nervs = array();\n".
+                      "public \$mascotts = array('Tux', 'Beastei', 'Gnu');\n\n\n".
                       "public function getArm(\$position)\n".
                       "    {\n".
                       "        return parent::getArm(\$position);\n".
@@ -247,7 +248,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             'with constructor' => array(
-                "public \$nervs = array();\npublic \$myPrivate;\n",
+                "public \$nervs = array();\npublic \$mascotts = array('Tux', 'Beastei', 'Gnu');\npublic \$myPrivate;\n",
                 '\lapistano\Tests\ProxyObject\DummyNS'
             ),
             'without constructor' => array(

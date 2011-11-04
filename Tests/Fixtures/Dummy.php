@@ -8,6 +8,7 @@ namespace {
         public $arms = array('left' => 'left arm', 'right' => 'right arm');
 
         protected $nervs = array();
+        protected $mascotts = array('Tux', 'Beastei', 'Gnu');
 
         protected function getArm($position)
         {
@@ -61,6 +62,11 @@ namespace {
         }
     }
 
+    class ExtendsDummy extends Dummy
+    {
+
+    }
+
 }
 
 namespace lapistano\Tests\ProxyObject {
@@ -71,6 +77,7 @@ namespace lapistano\Tests\ProxyObject {
         public $arms = array('left' => 'left arm', 'right' => 'right arm');
 
         protected $nervs = array();
+        protected $mascotts = array('Tux', 'Beastei', 'Gnu');
 
         private $myPrivate;
 
@@ -138,5 +145,10 @@ namespace lapistano\Tests\ProxyObject {
         {
             return $this->arms[$position];
         }
+    }
+
+    class ExtendsDummyNS extends DummyNS
+    {
+
     }
 }

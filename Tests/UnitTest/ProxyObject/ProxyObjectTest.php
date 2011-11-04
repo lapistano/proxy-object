@@ -59,6 +59,21 @@ class ProxyObjectTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \lapistano\ProxyObject\ProxyObject::getProxy
      */
+    public function testExposeInheritedMemeber() 
+    {
+        $proxyObject = new ProxyObject();
+        $proxy = $proxyObject->getProxy(
+            '\ExtendsDummy',
+            null,
+            array('mascotts')
+        );
+        
+        $this->assertEquals(array('Tux', 'Beastei', 'Gnu'), $proxy->mascotts);
+    }
+
+    /**
+     * @covers \lapistano\ProxyObject\ProxyObject::getProxy
+     */
     public function testGetProxy()
     {
         $this->assertInstanceOf('\lapistano\Tests\ProxyObject\DummyNS', $this->getDummyFixture());
