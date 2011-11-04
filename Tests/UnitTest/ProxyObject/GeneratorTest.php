@@ -236,6 +236,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider arrayToStringDataprovider
      * @covers \lapistano\ProxyObject\Generator::arrayToString
+     * @covers \lapistano\ProxyObject\Generator::traverseStructure
      */
     public function testArrayToString($expected, $array)
     {
