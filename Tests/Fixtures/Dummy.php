@@ -8,7 +8,7 @@ namespace {
         public $arms = array('left' => 'left arm', 'right' => 'right arm');
 
         protected $nervs = array();
-        protected $mascotts = array('Tux', 'Beastei', 'Gnu');
+        protected $mascotts = array(0 => 'Tux', 1 => 'Beastei', 2 => 'Gnu', );
 
         protected function getArm($position)
         {
@@ -77,7 +77,7 @@ namespace lapistano\Tests\ProxyObject {
         public $arms = array('left' => 'left arm', 'right' => 'right arm');
 
         protected $nervs = array();
-        protected $mascotts = array('Tux', 'Beastei', 'Gnu');
+        protected $mascotts = array(0 => 'Tux', 1 => 'Beastei', 2 => 'Gnu', );
 
         private $myPrivate;
 

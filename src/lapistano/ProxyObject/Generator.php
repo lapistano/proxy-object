@@ -317,7 +317,8 @@ class Generator
         $value = $properties[$property->getName()];
 
         if (is_array($value)) {
-            $value = sprintf(' = array(%s)', empty($value) ? '' : "'".implode("', '", $value) ."'");
+            $value = self::arrayToString($value);
+            $value = sprintf(' = array(%s)', $value);
         } else if (is_string($value)) {
             $value = sprintf(' = \'%s\'', $value);
         } else if (is_object($value)) {
@@ -542,4 +543,45 @@ class Generator
         include_once('Text/Template.php');
         return new \Text_Template($file);
     }
+
+    /**
+     * Converts the given array to its string represenation recursivly.
+     *
+     * @param array $value
+     * @return string
+     */
+    protected static function arrayToString(array $value) 
+    {
+        if (empty($value)) return '';
+        return self::traverseStructure(new \RecursiveArrayIterator($value));
+    }
+
+    /**
+     * Walks recursivly throught an array and concatinates the found info to a string.
+     *
+     * @param \RecurciveIterator $iterator
+     * @return string
+     */
+    protected static function traverseStructure($iterator) 
+    {
+        $children = '';
+        while ($iterator->valid()) {
+            if ($iterator->hasChildren()) {
+                $current = 'array (' . self::traverseStructure($iterator->getChildren()) . '), ';
+            }
+            else {
+                $current = "'" . $iterator->current() . "', ";
+            }
+            
+            $key = $iterator->key();
+
+            if (is_numeric($key)) {
+                $children .= $key . " => " . $current;
+            } else {
+                $children .= "'" . $key . "' => " . $current;
+            }
+            $iterator->next();
+        }
+        return $children;
+    } 
 }

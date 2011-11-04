@@ -49,7 +49,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             'code' => "class DummyProxy extends Dummy\n".
                       "{\n\n".
                       "public \$nervs = array();\n".
-                      "public \$mascotts = array('Tux', 'Beastei', 'Gnu');\n\n\n".
+                      "public \$mascotts = array(0 => 'Tux', 1 => 'Beastei', 2 => 'Gnu', );\n\n\n".
                       "public function getArm(\$position)\n".
                       "    {\n".
                       "        return parent::getArm(\$position);\n".
@@ -233,9 +233,37 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $proxy::getProxiedProperties('DummyNS', $class, array($property));
     }
 
+    /**
+     * @dataProvider arrayToStringDataprovider
+     * @covers \lapistano\ProxyObject\Generator::arrayToString
+     */
+    public function testArrayToString($expected, $array)
+    {
+        $this->assertEquals($expected, GeneratorProxy::arrayToString($array));
+    }
+
+
     /*************************************************************************/
     /* Dataprovider
     /*************************************************************************/
+
+    public static function arrayToStringDataprovider()
+    {
+        return array(
+            'one level' => array(
+                "0 => 'Tux', 1 => 'Beastie', ",
+                array('Tux', 'Beastie')
+            ),
+            'two level' => array(
+                "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => 'Foo', ", 
+                array('mascotts' => array('Tux', 'Beastie'), 'Foo')
+            ),
+            'mixed level' => array(
+                "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => array (0 => 'Foo', ), ", 
+                array('mascotts' => array('Tux', 'Beastie'), array('Foo'))
+            ),
+        );
+    }
 
     public static function getProxiedPropertiesExceptionDataprovider()
     {
@@ -248,7 +276,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             'with constructor' => array(
-                "public \$nervs = array();\npublic \$mascotts = array('Tux', 'Beastei', 'Gnu');\npublic \$myPrivate;\n",
+                "public \$nervs = array();\npublic \$mascotts = array(0 => 'Tux', 1 => 'Beastei', 2 => 'Gnu', );\npublic \$myPrivate;\n",
                 '\lapistano\Tests\ProxyObject\DummyNS'
             ),
             'without constructor' => array(
@@ -321,6 +349,11 @@ class GeneratorProxy extends \lapistano\ProxyObject\Generator
     public static function getInstance(\ReflectionClass $class)
     {
         return parent::getInstance($class);
+    }
+    
+    public static function arrayToString($array) 
+    {
+        return parent::arrayToString($array);
     }
 
 }
