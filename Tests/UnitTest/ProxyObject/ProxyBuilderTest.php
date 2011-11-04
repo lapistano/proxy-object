@@ -120,7 +120,7 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
      * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
      * @covers \lapistano\ProxyObject\ProxyBuilder::setMethods
      */
-    public function testGetProxyNamspacedMethod()
+    public function testGetProxyNamespacedMethod()
     {
         $proxyBuilder = $this->getProxyBuilderObject('\lapistano\Tests\ProxyObject\DummyNS');
 
@@ -128,7 +128,7 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
             ->setMethods(array('getArmNS'))
             ->getProxy();
 
-        $dummyProxy->getArmNS(new \stdClass);
+        $this->assertEquals('left arm', $dummyProxy->getArmNS(new \stdClass));
     }
 
     /**
