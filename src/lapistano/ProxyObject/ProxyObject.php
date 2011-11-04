@@ -86,15 +86,7 @@ class ProxyObject
                 return $proxy->newInstanceArgs($arguments);
             }
         } else {
-            // Use a trick to create a new object of a class
-            // without invoking its constructor.
-            return unserialize(
-                sprintf(
-                    'O:%d:"%s":0:{}',
-                    strlen($classname),
-                    $classname
-                )
-            );
+            return $this->getInstanceOf($classname);
         }
     }
 
@@ -108,6 +100,32 @@ class ProxyObject
     {
         return new ProxyBuilder(
             $this, $className
+        );
+    }
+
+    /**
+     * Provides an instance of the given class without invoking it's constructor
+     *
+     * @param string $classname
+     * @return object 
+     */
+    protected function getInstanceOf($classname) 
+    {
+        // As of PHP5.4 the reflection api provides a way to get an instance 
+        // of a class without invoking the constructor.
+        if (method_exists('ReflectionClass', 'newInstanceWithoutConstructor')) {
+            $class = new \ReflectionClass($classname);
+            return $class->newInstanceWithoutConstructor();
+        }
+
+        // Use a trick to create a new object of a class
+        // without invoking its constructor.
+        return unserialize(
+            sprintf(
+                'O:%d:"%s":0:{}',
+                strlen($classname),
+                $classname
+            )
         );
     }
 }
