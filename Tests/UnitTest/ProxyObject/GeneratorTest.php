@@ -49,7 +49,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             'code' => "class DummyProxy extends Dummy\n".
                       "{\n\n".
                       "public \$nervs = array();\n".
-                      "public \$mascotts = array(0 => 'Tux', 1 => 'Beastei', 2 => 'Gnu', );\n\n\n".
+                      "public \$mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );\n\n\n".
                       "public function getArm(\$position)\n".
                       "    {\n".
                       "        return parent::getArm(\$position);\n".
@@ -256,11 +256,11 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
                 array('Tux', 'Beastie')
             ),
             'two level' => array(
-                "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => 'Foo', ", 
+                "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => 'Foo', ",
                 array('mascotts' => array('Tux', 'Beastie'), 'Foo')
             ),
             'mixed level' => array(
-                "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => array (0 => 'Foo', ), ", 
+                "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => array (0 => 'Foo', ), ",
                 array('mascotts' => array('Tux', 'Beastie'), array('Foo'))
             ),
         );
@@ -277,7 +277,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             'with constructor' => array(
-                "public \$nervs = array();\npublic \$mascotts = array(0 => 'Tux', 1 => 'Beastei', 2 => 'Gnu', );\npublic \$myPrivate;\n",
+                "public \$nervs = array();\npublic \$mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );\npublic \$myPrivate;\n",
                 '\lapistano\Tests\ProxyObject\DummyNS'
             ),
             'without constructor' => array(
@@ -351,8 +351,8 @@ class GeneratorProxy extends \lapistano\ProxyObject\Generator
     {
         return parent::getInstance($class);
     }
-    
-    public static function arrayToString($array) 
+
+    public static function arrayToString($array)
     {
         return parent::arrayToString($array);
     }
