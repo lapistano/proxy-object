@@ -27,7 +27,7 @@
 
 namespace lapistano\Tests\FunctionalTests\ProxyObject;
 
-use lapistano\ProxyObject\ProxyObject;
+use lapistano\ProxyObject\ProxyBuilder;
 
 /**
  *
@@ -44,19 +44,20 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCompleteProxyFromClass()
     {
-        $proxy = new ProxyObject();
-        $proxyDummy = $proxy->getProxy('Dummy', array('getArm'));
+        $proxy = new ProxyBuilder('Dummy');
+        $proxyDummy = $proxy
+            ->setMethods(array('getArm'))
+            ->getProxy();
         $this->assertEquals('left arm', $proxyDummy->getArm('left'));
         $this->assertEquals('right arm', $proxyDummy->getArm('right'));
     }
 
     public function testGetCompleteProxyFromNamespacedClass()
     {
-        $proxy = new ProxyObject();
-        $proxyDummyNS = $proxy->getProxy(
-            '\lapistano\Tests\ProxyObject\DummyNS',
-            array('getArm', 'getArmNS')
-        );
+        $proxy = new ProxyBuilder('\lapistano\Tests\ProxyObject\DummyNS');
+        $proxyDummyNS = $proxy
+            ->setMethods(array('getArm', 'getArmNS'))
+            ->getProxy();
         $this->assertEquals('left arm', $proxyDummyNS->getArmNS(new \stdClass));
         $this->assertEquals('left arm', $proxyDummyNS->getArm('left'));
         $this->assertEquals('right arm', $proxyDummyNS->getArm('right'));
@@ -64,12 +65,11 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCompleteProxyFromNamespacedClassSelectedProperty()
     {
-        $proxy = new ProxyObject();
-        $proxyDummyNS = $proxy->getProxy(
-            '\lapistano\Tests\ProxyObject\DummyNS',
-            array('getArm', 'getArmNS'),
-            array('myPrivate')
-        );
+        $proxy = new ProxyBuilder('\lapistano\Tests\ProxyObject\DummyNS');
+        $proxyDummyNS = $proxy
+            ->setMethods(array('getArm', 'getArmNS'))
+            ->setProperties(array('myPrivate'))
+            ->getProxy();
 
         $proxyDummyNS->myPrivate = 'beastie';
 
@@ -82,12 +82,11 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetProxyOfSingleMethodFromNamespacedClass()
     {
-        $proxy = new ProxyObject();
-        $proxyDummyNS = $proxy->getProxy(
-            '\lapistano\Tests\ProxyObject\DummyNSwithStatic',
-            array('getArm'),
-            array('myPrivate', 'myProtected', 'myProtectedFloat')
-        );
+        $proxy = new ProxyBuilder('\lapistano\Tests\ProxyObject\DummyNSwithStatic');
+        $proxyDummyNS = $proxy
+            ->setMethods(array('getArm'))
+            ->setProperties(array('myPrivate', 'myProtected', 'myProtectedFloat'))
+            ->getProxy();
         $this->assertEquals('left arm', $proxyDummyNS->getArm('left'));
         $this->assertEquals('right arm', $proxyDummyNS->getArm('right'));
     }
@@ -98,21 +97,12 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetProxyExpectingPHPUnit_Framework_Exception($class, $methods)
     {
-        $proxy = new ProxyObject();
-        $proxyDummyNS = $proxy->getProxy($class, $methods);
-    }
-
-
-    public function testGetProxyBuilderFormClassWithUninitiableTypeHint()
-    {
-        //DummyWithConstructorAndUninitiableTypeHint
-        $proxy = new ProxyObject();
-        $proxyDummy = $proxy->getProxyBuilder('\\DummyWithConstructorAndUninitiableTypeHint')
-            ->disableOriginalConstructor()
+        $proxy = new ProxyBuilder($class);
+        $proxyDummyNS = $proxy
+            ->setMethods($methods)
             ->getProxy();
-        $this->assertEquals('Beastie', $proxyDummy->getMembers('Beastie'));
-        $this->assertEquals('tux', $proxyDummy->myProtected);
     }
+
 
     /*************************************************************************/
     /* Dataprovider & callbacks

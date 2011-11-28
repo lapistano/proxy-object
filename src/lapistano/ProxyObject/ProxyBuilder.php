@@ -41,11 +41,6 @@ namespace lapistano\ProxyObject;
 class ProxyBuilder
 {
     /**
-     * @var \lapistano\ProxyObject\ProxyObject
-     */
-    protected $proxyObject;
-
-    /**
      * @var string
      */
     protected $className;
@@ -86,12 +81,10 @@ class ProxyBuilder
     protected $originalClone = true;
 
     /**
-     * @param \lapistano\ProxyObject\ProxyObject $proxyObject
      * @param string $className
      */
-    public function __construct(ProxyObject $proxyObject, $className)
+    public function __construct($className)
     {
-        $this->proxyObject  = $proxyObject;
         $this->className = $className;
     }
 
@@ -102,17 +95,34 @@ class ProxyBuilder
      */
     public function getProxy()
     {
-        $a =  $this->proxyObject->getProxy(
-            $this->className,
-            $this->methods,
-            $this->properties,
-            $this->constructorArgs,
-            $this->proxyClassName,
-            $this->originalConstructor,
-            $this->autoload
+        include_once(__DIR__.'/Generator.php');
+
+        $proxyClass = Generator::generate(
+            $this->className, $this->methods, $this->properties, $this->proxyClassName, $this->autoload
         );
 
-        return $a;
+        if (!empty($proxyClass['namespaceName'])) {
+            $classname = $proxyClass['namespaceName'].'\\'.$proxyClass['proxyClassName'];
+        } else {
+            $classname = $proxyClass['proxyClassName'];
+        }
+
+        if (!class_exists($classname, false)) {
+            eval($proxyClass['code']);
+        }
+
+        if ($this->originalConstructor
+            && !interface_exists($this->className, $this->autoload)) {
+
+            if (empty($arguments)) {
+                return new $classname();
+            } else {
+                $proxy = new \ReflectionClass($classname);
+                return $proxy->newInstanceArgs($arguments);
+            }
+        } else {
+            return $this->getInstanceOf($classname);
+        }
     }
 
     /**
@@ -201,5 +211,31 @@ class ProxyBuilder
         $this->autoload = false;
 
         return $this;
+    }
+
+    /**
+     * Provides an instance of the given class without invoking it's constructor
+     *
+     * @param string $classname
+     * @return object
+     */
+    protected function getInstanceOf($classname)
+    {
+        // As of PHP5.4 the reflection api provides a way to get an instance
+        // of a class without invoking the constructor.
+        if (method_exists('ReflectionClass', 'newInstanceWithoutConstructor')) {
+            $class = new \ReflectionClass($classname);
+            return $class->newInstanceWithoutConstructor();
+        }
+
+        // Use a trick to create a new object of a class
+        // without invoking its constructor.
+        return unserialize(
+            sprintf(
+                'O:%d:"%s":0:{}',
+                strlen($classname),
+                $classname
+            )
+        );
     }
 }
