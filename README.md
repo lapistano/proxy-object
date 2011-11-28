@@ -21,19 +21,18 @@ Usecases
 One of the main purpose of this library is to expose invisible (private or protected) methods to the SUT. 
 To do so use just create a new ProxyBuilder object and pass the method to be exposed.
 
-    $proxy = new \lapistano\ProxyObject();
+    $proxy = new \lapistano\ProxyObject\ProxyBuilder('myClass');
 
     // generate and configure proxied object
 
     $proxiedObject = $proxy
-        ->getProxyBuilder('myClass')
         ->setConstructorAgrs(array('Argument1', 'Argument2'))
         ->setMethods(array('myMethod'))
         ->getProxy();
 
     // invoke proxied method
 
-    $proxieObject->myMethod();
+    $proxiedObject->myMethod();
 
 2. Exposing invisible Members
 -----------------------------
@@ -41,18 +40,17 @@ Another purpose of this library is to expose invisible members not reachable via
 from writing setter methods just for the purpose of unit testing. 
 Use the `setProperties()` method to archieve.
 
-    $proxy = new \lapistano\ProxyObject();
+    $proxy = new \lapistano\ProxyObject\ProxyBuilder('myClass');
 
     // generate and configure proxied object
 
     $proxiedObject = $proxy
-        ->getProxyBuilder('myClass')
         ->setProperties(array('myMember'))
         ->getProxy();
 
     // change content proxied member
 
-    $proxieObject->myMember = 'another value';
+    $proxiedObject->myMember = 'another value';
 
 Despite the fact that it is possible to expose private members by naming them in the setProperties array, generating a proxy object
 without the property declaration will only expose protected members. This is because I am not a big fan of exposing to much from a 
@@ -65,18 +63,17 @@ Sometimes it is necessary to supress the invokation of the defined constructor.
 Therefore I followed the API of PHPunits MockBuilder and added the `disableOriginalConstructor()` method.
 
 
-    $proxy = new \lapistano\ProxyObject();
+    $proxy = new \lapistano\ProxyObject\ProxyBuilder('myClass');
 
     // generate and configure proxied object
 
     $proxiedObject = $proxy
-        ->getProxyBuilder('myClass')
         ->disableOriginalConstructor()
         ->getProxy();
 
     // change value of proxied member
 
-    $proxieObject->myMember = 'another value';
+    $proxiedObject->myMember = 'another value';
 
 
 Documentation
