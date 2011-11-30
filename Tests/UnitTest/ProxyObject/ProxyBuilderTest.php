@@ -222,17 +222,6 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::disableOriginalClone
-     */
-    public function testDisableOriginalClone()
-    {
-        $proxyBuilder = $this->getProxyBuilderObject('\lapistano\Tests\ProxyObject\DummyNS');
-        $this->assertAttributeSame(true, 'originalClone', $proxyBuilder);
-        $this->assertInstanceOf('\lapistano\ProxyObject\ProxyBuilder', $proxyBuilder->disableOriginalClone());
-        $this->assertAttributeSame(false, 'originalClone', $proxyBuilder);
-    }
-
-    /**
      * @covers \lapistano\ProxyObject\ProxyBuilder::disableAutoload
      */
     public function testDisableAutoload()

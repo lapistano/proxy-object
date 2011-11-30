@@ -76,11 +76,6 @@ class ProxyBuilder
     protected $originalConstructor = true;
 
     /**
-     * @var boolean
-     */
-    protected $originalClone = true;
-
-    /**
      * @param string $className
      */
     public function __construct($className)
@@ -185,18 +180,6 @@ class ProxyBuilder
     public function disableOriginalConstructor()
     {
         $this->originalConstructor = false;
-
-        return $this;
-    }
-
-    /**
-     * Suppresses the invocation of the original clone constructor.
-     *
-     * @return \lapistano\ProxyObject\ProxyBuilder
-     */
-    public function disableOriginalClone()
-    {
-        $this->originalClone = false;
 
         return $this;
     }
