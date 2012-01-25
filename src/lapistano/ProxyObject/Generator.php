@@ -121,6 +121,18 @@ class Generator
     );
 
     /**
+     * Switch to decide if dedicated properties are to be exposed or not.
+     * @var boolean
+     */
+    protected static $exposeProperties = false;
+
+    /**
+     * Switch to decide if dedicated methods are to be exposed or not.
+     * @var boolean
+     */
+    protected static $exposeMethods = false;
+
+    /**
      * Gets the data to be used for the actual reflection.
      *
      * If the class has already been reflected in the same configuration
@@ -146,6 +158,14 @@ class Generator
             if (isset(self::$cache[$key])) {
                 return self::$cache[$key];
             }
+        }
+
+        if (!empty($methods)) {
+            self::$exposeMethods = true;
+        }
+
+        if (!empty($properties)) {
+            self::$exposeProperties = true;
         }
 
         $proxy = self::generateProxy(
@@ -352,7 +372,7 @@ class Generator
         $proxiedMethods = '';
         $templateDir = __DIR__.DIRECTORY_SEPARATOR.'Generator'.DIRECTORY_SEPARATOR;
 
-        if (is_array($methods) && count($methods) > 0) {
+        if (is_array($methods) && count($methods) > 0 ) {
             foreach ($methods as $methodName) {
                 if ($class->hasMethod($methodName)) {
                     $method = $class->getMethod($methodName);
@@ -379,7 +399,7 @@ class Generator
             }
         } else {
             $proxyMethods = $class->getMethods(\ReflectionMethod::IS_PROTECTED);
-            if (!(is_array($proxyMethods) && count($proxyMethods) > 0)) {
+            if (!(is_array($proxyMethods) && count($proxyMethods) > 0) && self::$exposeMethods === true) {
                 throw new \PHPUnit_Framework_Exception(
                     sprintf(
                         'Class "%s" has no protected methods.',

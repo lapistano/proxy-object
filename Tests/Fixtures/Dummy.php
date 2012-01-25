@@ -2,6 +2,26 @@
 
 namespace {
 
+    class DummyNoProtectedMethods
+    {
+        protected $mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );
+
+        public function test()
+        {
+            return test;
+        }
+    }
+
+    class DummyNoProtectedMembers
+    {
+        public $arms = array('left' => 'left arm', 'right' => 'right arm');
+
+        protected function getArm($position)
+        {
+            return $this->arms[$position];
+        }
+    }
+
     class Dummy
     {
 

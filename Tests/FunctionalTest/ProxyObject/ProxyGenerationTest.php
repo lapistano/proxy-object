@@ -103,6 +103,24 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
             ->getProxy();
     }
 
+    public function testProxyMemberOfClassWithNoHiddenMember()
+    {
+        $proxy = new ProxyBuilder('DummyNoProtectedMembers');
+        $proxyDummyNS = $proxy
+            ->setMethods(array('getArm'))
+            ->getProxy();
+        $this->assertEquals('left arm', $proxyDummyNS->getArm('left'));
+    }
+
+    public function testProxyMemberOfClassWithNoHiddenMethod()
+    {
+        $proxy = new ProxyBuilder('DummyNoProtectedMethods');
+        $proxyDummyNS = $proxy
+            ->setProperties(array('mascotts'))
+            ->getProxy();
+        $this->assertInternalType('array', $proxyDummyNS->mascotts);
+    }
+
 
     /*************************************************************************/
     /* Dataprovider & callbacks
