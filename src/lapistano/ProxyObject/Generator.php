@@ -399,6 +399,7 @@ class Generator
             }
         } else {
             $proxyMethods = $class->getMethods(\ReflectionMethod::IS_PROTECTED);
+
             if (!(is_array($proxyMethods) && count($proxyMethods) > 0) && self::$exposeMethods === true) {
                 throw new \PHPUnit_Framework_Exception(
                     sprintf(

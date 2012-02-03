@@ -42,6 +42,15 @@ use lapistano\ProxyObject\ProxyBuilder;
 class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
 {
 
+    public function testProxyMemberOfClassWithNoHiddenMethod()
+    {
+        $proxy = new ProxyBuilder('DummyNoProtectedMethods');
+        $proxyDummyNS = $proxy
+            ->setProperties(array('mascotts'))
+            ->getProxy();
+        $this->assertInternalType('array', $proxyDummyNS->mascotts);
+    }
+
     public function testGetCompleteProxyFromClass()
     {
         $proxy = new ProxyBuilder('Dummy');
@@ -111,16 +120,6 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
             ->getProxy();
         $this->assertEquals('left arm', $proxyDummyNS->getArm('left'));
     }
-
-    public function testProxyMemberOfClassWithNoHiddenMethod()
-    {
-        $proxy = new ProxyBuilder('DummyNoProtectedMethods');
-        $proxyDummyNS = $proxy
-            ->setProperties(array('mascotts'))
-            ->getProxy();
-        $this->assertInternalType('array', $proxyDummyNS->mascotts);
-    }
-
 
     /*************************************************************************/
     /* Dataprovider & callbacks

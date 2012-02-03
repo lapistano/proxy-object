@@ -109,11 +109,11 @@ class ProxyBuilder
         if ($this->originalConstructor
             && !interface_exists($this->className, $this->autoload)) {
 
-            if (empty($arguments)) {
+            if (empty($this->constructorArgs)) {
                 return new $classname();
             } else {
                 $proxy = new \ReflectionClass($classname);
-                return $proxy->newInstanceArgs($arguments);
+                return $proxy->newInstanceArgs($this->constructorArgs);
             }
         } else {
             return $this->getInstanceOf($classname);
