@@ -1,7 +1,7 @@
 {
     "name": "lapistano/proxy-object",
     "description": "A library that makes it much easier to generate a proxy of your system under test (SUT)",
-    "keywords": ["testing", "proxy-object"],
+    "keywords": ["testing", "proxy-object", "phpunit"],
     "homepage": "http://www.github.com/lapistano/proxy-object",
     "type": "library",
     "license": "Apache 2.0",
@@ -11,4 +11,11 @@
     "autoload": {
         "psr-0": { "lapistano": "src/" }
     }
+    "authors": [
+        {
+            "name": "Bastian Feder",
+            "email": "lapis@bastian-feder.de",
+            "homepage": "http://blog.bastian-feder.de"
+        }
+    ]
 }
