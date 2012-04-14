@@ -1,0 +1,14 @@
+{
+    "name": "lapistano/proxy-object",
+    "description": "A library that makes it much easier to generate a proxy of your system under test (SUT)",
+    "keywords": ["testing", "proxy-object"],
+    "homepage": "http://www.github.com/lapistano/proxy-object",
+    "type": "library",
+    "license": "Apache 2.0",
+    "require": {
+        "php":">=5.3.2"
+    },
+    "autoload": {
+        "psr-0": { "lapistano": "src/" }
+    }
+}
