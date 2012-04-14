@@ -10,7 +10,7 @@
     },
     "autoload": {
         "psr-0": { "lapistano": "src/" }
-    }
+    },
     "authors": [
         {
             "name": "Bastian Feder",
