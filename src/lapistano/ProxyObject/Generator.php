@@ -292,17 +292,7 @@ class Generator
             foreach ($properties as $propertyName) {
                 if ($class->hasProperty($propertyName)) {
                     $property = $class->getProperty($propertyName);
-                    if (self::canProxyProperty($property)) {
-                        $proxiedProperties .= self::generateProxiedPropertyDefinition($templateDir, $property, $class);
-                    } else {
-                        throw new \PHPUnit_Framework_Exception(
-                            sprintf(
-                                'Can not proxy property "%s" of class "%s".',
-                                $propertyName,
-                                $fullClassName
-                            )
-                        );
-                    }
+                    $proxiedProperties .= self::generateProxiedPropertyDefinition($templateDir, $property, $class);
                 } else {
                     throw new \PHPUnit_Framework_Exception(
                         sprintf(
@@ -533,20 +523,6 @@ class Generator
             return true;
         }
         return false;
-    }
-
-    /**
-     * Determine if the given proxy may be proxied.
-     *
-     * Currently I cannot think about a member not being able to be proxied.
-     * So this method returns (bool)true in every case.
-     *
-     * @param \ReflectionProperty $property Name of the property to be reflected.
-     * @return boolean True, if the given method may be reflected, else false.
-     */
-    protected static function canProxyProperty(\ReflectionProperty $property)
-    {
-        return true;
     }
 
     /**

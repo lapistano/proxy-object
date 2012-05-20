@@ -232,4 +232,16 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeSame(false, 'autoload', $proxyBuilder);
     }
 
+    /**
+     * @covers \lapistano\ProxyObject\ProxyBuilder::getInstanceOf
+     */
+    public function testGetInstanceOf() 
+    {
+        $proxyBuilder = new ProxyBuilder('\lapistano\ProxyObject\ProxyBuilder');
+        $proxy = $proxyBuilder
+            ->disableOriginalConstructor()
+            ->setMethods(array('getInstanceOf'))
+            ->getProxy();
+        $this->assertInstanceOf('stdClass', $proxy->getInstanceOf('stdClass'));
+    }
 }

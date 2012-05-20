@@ -99,17 +99,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider canProxyMethodDataprovider
-     * @covers \lapistano\ProxyObject\Generator::canProxyMethod
-     */
-    public function testCanProxyMethod($expected, $method)
-    {
-        $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
-        $method = $class->getMethod($method);
-        $this->assertEquals($expected, GeneratorProxy::canProxyMethod($method));
-    }
-
-    /**
      * @expectedException \PHPUnit_Framework_Exception
      * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
@@ -224,7 +213,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getProxiedPropertiesExceptionDataprovider
      * @expectedException \PHPUnit_Framework_Exception
      * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
-     * @covers \lapistano\ProxyObject\Generator::canProxyProperty
      */
     public function testGetProxiedPropertiesExpectingPHPUnit_Framework_Exception($property)
     {
@@ -243,10 +231,29 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, GeneratorProxy::arrayToString($array));
     }
 
+    /**
+     * @dataProvider canProxyMethodDataprovider
+     * @covers \lapistano\ProxyObject\Generator::canProxyMethod
+     */
+    public function testCanProxyMethod($method)
+    {
+        $reflected = new \ReflectionMethod('\lapistano\Tests\ProxyObject\DummyNS', $method);
+        $this->assertFalse(GeneratorProxy::canProxyMethod($reflected));
+    }
+
 
     /*************************************************************************/
     /* Dataprovider
     /*************************************************************************/
+
+    public static function canProxyMethodDataprovider()
+    {
+        return array(
+            'final method' => array('armsFinal'),
+            'static method' => array('arms'),
+            'public method' => array('getArms'),
+        );
+    }
 
     public static function arrayToStringDataprovider()
     {
@@ -305,18 +312,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
             'final method' => array('\lapistano\Tests\ProxyObject\DummyNS', 'armsFinal'),
         );
     }
-
-    public static function canProxyMethodDataprovider()
-    {
-        return array(
-            'protected method' => array(true, 'getArm'),
-            'public method'    => array(false, 'getArms'),
-            'constructor'      => array(false, '__construct'),
-            'static'           => array(false, 'arms'),
-            'final'            => array(false, 'armsFinal'),
-        );
-    }
-
 }
 
 class GeneratorProxy extends \lapistano\ProxyObject\Generator
