@@ -7,7 +7,7 @@ Another thought on this library was, that it should be very easy to use if you k
 in PHPUnit. Proxy-object has almost the same API, but does not change the behavior of the proxied class/method.
 The only purpose is to expose hidden (protected & private) methods and members. 
 
-Current travis status: [![Build Status](https://secure.travis-ci.org/lapistanno/proxy-object.png?branch=master)](http://travis-ci.org/lapistano/proxy-object)
+Current travis status: [![Build Status](https://secure.travis-ci.org/lapistano/proxy-object.png?branch=master)](http://travis-ci.org/lapistano/proxy-object)
 
 Installation
 ============
