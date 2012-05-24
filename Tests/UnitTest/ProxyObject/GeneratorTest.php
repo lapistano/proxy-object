@@ -347,7 +347,7 @@ class GeneratorProxy extends \lapistano\ProxyObject\Generator
         return parent::getInstance($class);
     }
 
-    public static function arrayToString($array)
+    public static function arrayToString(array $array)
     {
         return parent::arrayToString($array);
     }
