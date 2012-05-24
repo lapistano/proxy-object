@@ -17,6 +17,24 @@ and use it.
 In case you don't use a PSR-0 compatible autoloader, you only have to add the `bootstrap.php` into your bootstrap or 
 autoloader.
 
+Composer
+--------
+
+```json
+{
+    "require": {¬
+        "lapistano/proxy-object": "2.*"
+    }
+}
+```
+
+Github
+------
+
+```bash
+$ git clone git://github.com/lapistano/proxy-object.git
+```
+
 Usecases
 ========
 
