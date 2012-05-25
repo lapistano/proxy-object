@@ -111,7 +111,7 @@ $proxiedObject->myMember = 'another value';
 
 ```
 
-Easee access to the proxy-object in your test suite
+Ease access to the proxy-object in your test suite
 ===================================================
 Since I am really lazy ;) and I really like convenience I extended the `PHPUnit_Framework_TestCase` class and 
 added the following method.
