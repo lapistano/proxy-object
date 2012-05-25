@@ -19,17 +19,26 @@ autoloader.
 
 Composer
 --------
+Add the following lines to your `composer.json` file and update your project's composer installation.
 
 ```json
 {
-    "require": {¬
+    "require-dev": {¬
         "lapistano/proxy-object": "2.*"
     }
 }
 ```
 
+This composer configuration will checkout the sources tagged as the 2nd release. In case your want the 'cutting eadge' version
+replace '2.*' by 'dev-master'. But be alarmed that this might be broken sometimes.
+
+    In case you do not know what this means the [composer project website](http://getcomposer.org) is a good place to start.
+
+
 Github
 ------
+Thus I recommend the composer way to make proxy-object a dependency to your project. 
+The sources are also available via github. Just clone it as you might be familiar with.
 
 ```bash
 $ git clone git://github.com/lapistano/proxy-object.git
