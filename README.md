@@ -14,7 +14,7 @@ Installation
 Thanks to the feedback of [beberlei](https://github.com/beberlei) the source is now PSR-0 compatible. 
 There is no specific installation routine to be followed. Just clone or checkout the source into to your project 
 and use it.
-In case you don't use a PSR-0 compatible autoloader, you only have to add the `bootstrap.php` into your bootstrap or 
+In case you don't use a [PSR-0](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md) compatible autoloader, you only have to add the `bootstrap.php` into your bootstrap or 
 autoloader.
 
 Composer
@@ -23,7 +23,7 @@ Add the following lines to your `composer.json` file and update your project's c
 
 ```json
 {
-    "require-dev": {¬
+    "require-dev": {
         "lapistano/proxy-object": "2.*"
     }
 }
@@ -32,7 +32,8 @@ Add the following lines to your `composer.json` file and update your project's c
 This composer configuration will checkout the sources tagged as the 2nd release. In case your want the 'cutting eadge' version
 replace '2.*' by 'dev-master'. But be alarmed that this might be broken sometimes.
 
-    In case you do not know what this means the [composer project website](http://getcomposer.org) is a good place to start.
+**NOTE:**
+In case you do not know what this means the [composer project website](http://getcomposer.org) is a good place to start.
 
 
 Github
@@ -52,18 +53,20 @@ Usecases
 One of the main purpose of this library is to expose invisible (private or protected) methods to the SUT. 
 To do so use just create a new ProxyBuilder object and pass the method to be exposed.
 
-    $proxy = new \lapistano\ProxyObject\ProxyBuilder('myClass');
+```php
 
-    // generate and configure proxied object
+$proxy = new \lapistano\ProxyObject\ProxyBuilder('myClass');
 
-    $proxiedObject = $proxy
-        ->setConstructorAgrs(array('Argument1', 'Argument2'))
-        ->setMethods(array('myMethod'))
-        ->getProxy();
+// generate and configure proxied object
+$proxiedObject = $proxy
+    ->setConstructorAgrs(array('Argument1', 'Argument2'))
+    ->setMethods(array('myMethod'))
+    ->getProxy();
 
-    // invoke proxied method
+// invoke proxied method
+$proxiedObject->myMethod();
 
-    $proxiedObject->myMethod();
+```
 
 2. Exposing invisible Members
 -----------------------------
@@ -71,52 +74,90 @@ Another purpose of this library is to expose invisible members not reachable via
 from writing setter methods just for the purpose of unit testing. 
 Use the `setProperties()` method to archieve.
 
-    $proxy = new \lapistano\ProxyObject\ProxyBuilder('myClass');
+```php
+$proxy = new \lapistano\ProxyObject\ProxyBuilder('myClass');
 
-    // generate and configure proxied object
+// generate and configure proxied object
+$proxiedObject = $proxy
+    ->setProperties(array('myMember'))
+    ->getProxy();
 
-    $proxiedObject = $proxy
-        ->setProperties(array('myMember'))
-        ->getProxy();
+// change content proxied member
+$proxiedObject->myMember = 'another value';
 
-    // change content proxied member
-
-    $proxiedObject->myMember = 'another value';
+```
 
 Despite the fact that it is possible to expose private members by naming them in the setProperties array, generating a 
 proxy object without the property declaration will only expose protected members. This is because I am not a big fan of 
-exposing to much from a class necessary. If someone thinks this should be changed, I would be more than happy to 
-discuss this topic. 
-
+exposing too much from a class. If someone thinks this should be changed, I would be more than happy to discuss this topic. 
 
 3. Creating a proxied object without calling the constructor
 ------------------------------------------------------------
 Sometimes it is necessary to supress the invokation of the defined constructor. 
 Therefore I followed the API of PHPunits MockBuilder and added the `disableOriginalConstructor()` method.
 
+```php
 
-    $proxy = new \lapistano\ProxyObject\ProxyBuilder('myClass');
+$proxy = new \lapistano\ProxyObject\ProxyBuilder('myClass');
 
-    // generate and configure proxied object
+// generate and configure proxied object
+$proxiedObject = $proxy
+    ->disableOriginalConstructor()
+    ->getProxy();
 
-    $proxiedObject = $proxy
-        ->disableOriginalConstructor()
-        ->getProxy();
+// change value of proxied member
+$proxiedObject->myMember = 'another value';
 
-    // change value of proxied member
+```
 
-    $proxiedObject->myMember = 'another value';
+Ease access to the proxy-object in your test suite
+===================================================
+Since I am really lazy ;) and I really like convenience I extended the `PHPUnit_Framework_TestCase` class and 
+added the following method.
+
+```php
+
+/**
+ * Provides a ProxyBuilder object.
+ *
+ * @param string $classname
+ * @return lapistano\ProxyObject\ProxyBuilder
+ */
+protected function getProxyBuilder($classname) {
+    return new \lapistano\ProxyObject\ProxyBuilder($classname);
+}
+
+```
+
+Every of your test cases should now extend your own extended test case class so you can create a new proxy-object 
+by just calling `$this->getProxyObject('\\my\\namespace\\myclass');`. Used in one of the examples above it will look like this.
+
+```php
+
+// generate and configure proxied object
+$proxiedObject = $this->getProxyObject('myClass')
+    ->disableOriginalConstructor()
+    ->getProxy();
+
+// change value of proxied member
+$proxiedObject->myMember = 'another value';
+
+```
 
 
 Documentation
 =============
 Since there is a exhausting documentation of the API in the source code, I decided not to write a separate one.
-Use phpDocumentor (http://phpdoc.org) to extract and generate your own documentation. 
-I added a phpdoc.example.ini in the doc/config folder. Follow the instructions in the doc/config/README to setup 
+Use [phpDocumentor](http://phpdoc.org) to extract and generate your own documentation. 
+I added a phpdoc.example.ini in the doc/config folder. Follow the instructions in the `doc/config/README` to setup 
 the generation of the documentation.
 
 Limitations
 ===========
 As you might expect there are also some limitations this library has to deal with. This limitations are not introduced
-by this implementation, but are limitations which caome from PHP. So it is not possible to expose methods marked as 
+by this implementation, but are limitations which come from PHP. So it is not possible to expose methods marked as 
 final or static.
+
+Future stuff
+============
+- Improve error messages (e.g. by telling why a method/member could not be exposed)
