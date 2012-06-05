@@ -132,15 +132,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
      * @expectedException \PHPUnit_Framework_Exception
      * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
-    public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionNoProtectedMethods()
-    {
-        $actual = GeneratorProxy::generateProxy('DummyAllPublic');
-    }
-
-    /**
-     * @expectedException \PHPUnit_Framework_Exception
-     * @covers \lapistano\ProxyObject\Generator::generateProxy
-     */
     public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethods()
     {
         $actual = GeneratorProxy::generateProxy('\lapistano\Tests\ProxyObject\DummyNS', array('armsFinal'));

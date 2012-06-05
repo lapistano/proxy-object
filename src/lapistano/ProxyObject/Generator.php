@@ -148,6 +148,9 @@ class Generator
                                     $proxyClassName = '', $callAutoload = false)
     {
 
+        self::$exposeMethods    = false;
+        self::$exposeProperties = false;
+
         if ($proxyClassName == '') {
             $key = md5(
                 $originalClassName.

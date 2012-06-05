@@ -8,7 +8,7 @@ namespace {
 
         public function test()
         {
-            return test;
+            return 'test';
         }
     }
 

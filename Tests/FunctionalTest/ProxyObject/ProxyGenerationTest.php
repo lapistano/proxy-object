@@ -129,7 +129,6 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             'final method' => array('\lapistano\Tests\ProxyObject\DummyNS', array('armsFinal')),
-            'no protected methods' => array('\DummyAllPublic', array()),
             'no protected methods with unknown method' => array('\DummyAllPublic', array('unknown method')),
         );
     }
