@@ -39,317 +39,372 @@ use lapistano\ProxyObject\Generator;
  */
 class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
+  /**
+   * @param string $data
+   * @return mixed|string
+   */
+  protected function slag($data)
+  {
+    return str_replace(array("\r", "\r\n", "\n", "  "), "", $data);
+  }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::generate
-     */
-    public function testGenerateWithPredefinedProxyName()
-    {
-        $expected = array(
-            'code' => "class DummyProxy extends Dummy\n".
-                      "{\n\n".
-                      "public \$nervs = array();\n".
-                      "public \$mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );\n\n\n".
-                      "public function getArm(\$position)\n".
-                      "    {\n".
-                      "        return parent::getArm(\$position);\n".
-                      "    }\n\n\n}\n",
-            'proxyClassName' => 'DummyProxy',
-            'namespaceName' => ''
-        );
-        $generator = new Generator();
-        $this->assertEquals($expected, $generator::generate('Dummy', null, null, 'DummyProxy'));
-    }
+  /**
+   * @covers \lapistano\ProxyObject\Generator::generate
+   */
+  public function testGenerateWithPredefinedProxyName()
+  {
+    $expected = array(
+      'code'           => "class DummyProxy extends Dummy\n"
+        . "{\n\n"
+          . "public \$nervs = array();\n"
+          . "public \$mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );\n\n\n"
+          . "public function getArm(\$position)\n"
+        . "    {\n"
+        . "        return parent::getArm(\$position);\n"
+        . "    }\n\n\n}\n",
+      'proxyClassName' => 'DummyProxy',
+      'namespaceName'  => ''
+    );
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::generate
-     */
-    public function testGenerate()
-    {
-        $generator = new Generator();
-        $proxy = $generator::generate('Dummy');
+    $generator = new Generator();
+    $result    = $generator::generate('Dummy', null, null, 'DummyProxy');
 
-        $this->assertRegExp('/^Proxy_Dummy_\w+/', $proxy['proxyClassName']);
-        $this->assertEmpty($proxy['namespaceName']);
-    }
+    $this->assertArrayHasKey('code', $result);
+    $this->assertArrayHasKey('proxyClassName', $result);
+    $this->assertArrayHasKey('namespaceName', $result);
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::generate
-     */
-    public function testGenerateProxyFromCache()
-    {
-        $generator = new Generator();
-        $proxy = $generator::generate('Dummy');
-        $actual = $generator::generate('Dummy');
+    $this->assertEquals('DummyProxy', $result['proxyClassName']);
 
-        $this->assertRegExp('/^Proxy_Dummy_\w+/', $actual['proxyClassName']);
-        $this->assertEmpty($actual['namespaceName']);
-    }
+    $this->assertEquals(
+      $this->slag($expected['code']),
+      $this->slag($result['code'])
+    );
+  }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::getMethodCallParameters
-     */
-    public function testGetMethodCallParameters()
-    {
-        $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
-        $proxy = new GeneratorProxy();
-        $method = $class->getMethod('getArm');
+  /**
+   * @covers \lapistano\ProxyObject\Generator::generate
+   */
+  public function testGenerate()
+  {
+    $generator = new Generator();
+    $proxy     = $generator::generate('Dummy');
 
-        $this->assertEquals('$position, $foo', $proxy::getMethodCallParameters($method));
-    }
+    $this->assertRegExp('/^Proxy_Dummy_\w+/', $proxy['proxyClassName']);
+    $this->assertEmpty($proxy['namespaceName']);
+  }
 
-    /**
-     * @expectedException \PHPUnit_Framework_Exception
-     * @covers \lapistano\ProxyObject\Generator::generateProxy
-     */
-    public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethod()
-    {
-        $expected = array (
-            "namespaceName" => "\lapistano\Tests\ProxyObject"
-        );
+  /**
+   * @covers \lapistano\ProxyObject\Generator::generate
+   */
+  public function testGenerateProxyFromCache()
+  {
+    $generator = new Generator();
+    $proxy     = $generator::generate('Dummy');
+    $actual    = $generator::generate('Dummy');
 
-        $actual = GeneratorProxy::generateProxy(
-            '\lapistano\Tests\ProxyObject\DummyNS',
-            array('arm')
-        );
-    }
+    $this->assertRegExp('/^Proxy_Dummy_\w+/', $actual['proxyClassName']);
+    $this->assertEmpty($actual['namespaceName']);
+  }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::generateProxy
-     */
-    public function testGenerateProxyAllProtectedMethods()
-    {
-        $expected = array (
-            "namespaceName" => "\lapistano\Tests\ProxyObject"
-        );
+  /**
+   * @covers \lapistano\ProxyObject\Generator::getMethodCallParameters
+   */
+  public function testGetMethodCallParameters()
+  {
+    $class  = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
+    $proxy  = new GeneratorProxy();
+    $method = $class->getMethod('getArm');
 
-        $actual = GeneratorProxy::generateProxy('Dummy');
+    $this->assertEquals('$position, $foo', $proxy::getMethodCallParameters($method));
+  }
 
-        $this->assertRegExp('/^Proxy_Dummy_\w+/', $actual['proxyClassName']);
-    }
+  /**
+   * @expectedException \PHPUnit_Framework_Exception
+   * @covers \lapistano\ProxyObject\Generator::generateProxy
+   */
+  public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethod()
+  {
+    $expected = array(
+      "namespaceName" => "\lapistano\Tests\ProxyObject"
+    );
 
-    /**
-     * @expectedException \PHPUnit_Framework_Exception
-     * @covers \lapistano\ProxyObject\Generator::generateProxy
-     */
-    public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionNoProtectedMethods()
-    {
-        $actual = GeneratorProxy::generateProxy('DummyAllPublic');
-    }
+    $actual = GeneratorProxy::generateProxy(
+      '\lapistano\Tests\ProxyObject\DummyNS', array( 'arm' )
+    );
+  }
 
-    /**
-     * @expectedException \PHPUnit_Framework_Exception
-     * @covers \lapistano\ProxyObject\Generator::generateProxy
-     */
-    public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethods()
-    {
-        $actual = GeneratorProxy::generateProxy('\lapistano\Tests\ProxyObject\DummyNS', array('armsFinal'));
-    }
+  /**
+   * @covers \lapistano\ProxyObject\Generator::generateProxy
+   */
+  public function testGenerateProxyAllProtectedMethods()
+  {
+    $expected = array(
+      "namespaceName" => "\lapistano\Tests\ProxyObject"
+    );
 
-    /**
-     * @expectedException \PHPUnit_Framework_Exception
-     * @dataProvider generateProxyExpectingExceptionDataprovider
-     * @covers \lapistano\ProxyObject\Generator::generateProxy
-     */
-    public function testGenerateProxyExpectingPHPUnit_Framework_Exception($class, $method)
-    {
-        $actual = GeneratorProxy::generateProxy($class, array($method));
-    }
+    $actual = GeneratorProxy::generateProxy('Dummy');
 
-    /**
-     * @dataProvider getArgumentDeclarationDataprovider
-     * @covers \lapistano\ProxyObject\Generator::getArgumentDeclaration
-     */
-    public function testGetArgumentDeclaration($expected, $method)
-    {
-        $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
-        $proxy = new GeneratorProxy();
-        $method = $class->getMethod($method);
+    $this->assertRegExp('/^Proxy_Dummy_\w+/', $actual['proxyClassName']);
+  }
 
-        $this->assertEquals($expected, $proxy::getArgumentDeclaration($method));
-    }
+  /**
+   * @expectedException \PHPUnit_Framework_Exception
+   * @covers \lapistano\ProxyObject\Generator::generateProxy
+   */
+  public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionNoProtectedMethods()
+  {
+    $actual = GeneratorProxy::generateProxy('DummyAllPublic');
+  }
 
-    /**
-     * @dataProvider getProxiedPropertiesDataprovider
-     * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
-     */
-    public function testGetProxiedProperties($expected, $className)
-    {
-        $class = new \ReflectionClass($className);
-        $proxy = new GeneratorProxy();
+  /**
+   * @expectedException \PHPUnit_Framework_Exception
+   * @covers \lapistano\ProxyObject\Generator::generateProxy
+   */
+  public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethods()
+  {
+    $actual = GeneratorProxy::generateProxy('\lapistano\Tests\ProxyObject\DummyNS', array( 'armsFinal' ));
+  }
 
-        $this->assertEquals($expected, $proxy::getProxiedProperties('DummyNS', $class));
-    }
+  /**
+   * @expectedException \PHPUnit_Framework_Exception
+   * @dataProvider generateProxyExpectingExceptionDataprovider
+   * @covers \lapistano\ProxyObject\Generator::generateProxy
+   */
+  public function testGenerateProxyExpectingPHPUnit_Framework_Exception($class, $method)
+  {
+    $actual = GeneratorProxy::generateProxy($class, array( $method ));
+  }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
-     */
-    public function testGetProxiedPropertiesSelectedProperty()
-    {
-        $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
-        $proxy = new GeneratorProxy();
+  /**
+   * @dataProvider getArgumentDeclarationDataprovider
+   * @covers \lapistano\ProxyObject\Generator::getArgumentDeclaration
+   */
+  public function testGetArgumentDeclaration($expected, $method)
+  {
+    $class  = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
+    $proxy  = new GeneratorProxy();
+    $method = $class->getMethod($method);
 
-        $this->assertEquals(
-            'public $myPrivate;'."\n",
-            $proxy::getProxiedProperties('DummyNS', $class, array('myPrivate'))
-        );
-    }
+    $this->assertEquals($expected, $proxy::getArgumentDeclaration($method));
+  }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
-     */
-    public function testGetProxiedPropertiesSelectedStaticProperty()
-    {
-        $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNSwithStatic');
-        $proxy = new GeneratorProxy();
+  /**
+   * @dataProvider getProxiedPropertiesDataprovider
+   * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
+   */
+  public function testGetProxiedProperties($expected, $className)
+  {
+    $class = new \ReflectionClass($className);
+    $proxy = new GeneratorProxy();
 
-        $this->assertEquals(
-            'public static $myStatic = \'tux\';'."\n",
-            $proxy::getProxiedProperties('DummyNSwithStatic', $class, array('myStatic'))
-        );
-    }
+    $this->assertEquals(
+      $this->slag($expected),
+      $this->slag($proxy::getProxiedProperties('DummyNS', $class))
+    );
+  }
 
-    /**
-     * @dataProvider getProxiedPropertiesExceptionDataprovider
-     * @expectedException \PHPUnit_Framework_Exception
-     * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
-     */
-    public function testGetProxiedPropertiesExpectingPHPUnit_Framework_Exception($property)
-    {
-        $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNSwithStatic');
-        $proxy = new GeneratorProxy();
-        $proxy::getProxiedProperties('DummyNS', $class, array($property));
-    }
+  /**
+   * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
+   */
+  public function testGetProxiedPropertiesSelectedProperty()
+  {
+    $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
+    $proxy = new GeneratorProxy();
 
-    /**
-     * @dataProvider arrayToStringDataprovider
-     * @covers \lapistano\ProxyObject\Generator::arrayToString
-     * @covers \lapistano\ProxyObject\Generator::traverseStructure
-     */
-    public function testArrayToString($expected, $array)
-    {
-        $this->assertEquals($expected, GeneratorProxy::arrayToString($array));
-    }
+    $this->assertEquals(
+      $this->slag('public $myPrivate;' . "\n"),
+      $this->slag($proxy::getProxiedProperties('DummyNS', $class, array( 'myPrivate' )))
+    );
+  }
 
-    /**
-     * @dataProvider canProxyMethodDataprovider
-     * @covers \lapistano\ProxyObject\Generator::canProxyMethod
-     */
-    public function testCanProxyMethod($method)
-    {
-        $reflected = new \ReflectionMethod('\lapistano\Tests\ProxyObject\DummyNS', $method);
-        $this->assertFalse(GeneratorProxy::canProxyMethod($reflected));
-    }
+  /**
+   * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
+   */
+  public function testGetProxiedPropertiesSelectedStaticProperty()
+  {
+    $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNSwithStatic');
+    $proxy = new GeneratorProxy();
 
+    $this->assertEquals(
+      $this->slag('public static $myStatic = \'tux\';' . "\n"),
+      $this->slag($proxy::getProxiedProperties('DummyNSwithStatic', $class, array( 'myStatic' )))
+    );
+  }
 
-    /*************************************************************************/
-    /* Dataprovider
-    /*************************************************************************/
+  /**
+   * @dataProvider getProxiedPropertiesExceptionDataprovider
+   * @expectedException \PHPUnit_Framework_Exception
+   * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
+   */
+  public function testGetProxiedPropertiesExpectingPHPUnit_Framework_Exception($property)
+  {
+    $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNSwithStatic');
+    $proxy = new GeneratorProxy();
+    $proxy::getProxiedProperties('DummyNS', $class, array( $property ));
+  }
 
-    public static function canProxyMethodDataprovider()
-    {
-        return array(
-            'final method' => array('armsFinal'),
-            'static method' => array('arms'),
-            'public method' => array('getArms'),
-        );
-    }
+  /**
+   * @dataProvider arrayToStringDataprovider
+   * @covers \lapistano\ProxyObject\Generator::arrayToString
+   * @covers \lapistano\ProxyObject\Generator::traverseStructure
+   */
+  public function testArrayToString($expected, $array)
+  {
+    $this->assertEquals($expected, GeneratorProxy::arrayToString($array));
+  }
 
-    public static function arrayToStringDataprovider()
-    {
-        return array(
-            'one level' => array(
-                "0 => 'Tux', 1 => 'Beastie', ",
-                array('Tux', 'Beastie')
-            ),
-            'two level' => array(
-                "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => 'Foo', ",
-                array('mascotts' => array('Tux', 'Beastie'), 'Foo')
-            ),
-            'mixed level' => array(
-                "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => array (0 => 'Foo', ), ",
-                array('mascotts' => array('Tux', 'Beastie'), array('Foo'))
-            ),
-        );
-    }
+  /**
+   * @dataProvider canProxyMethodDataprovider
+   * @covers \lapistano\ProxyObject\Generator::canProxyMethod
+   */
+  public function testCanProxyMethod($method)
+  {
+    $reflected = new \ReflectionMethod('\lapistano\Tests\ProxyObject\DummyNS', $method);
+    $this->assertFalse(GeneratorProxy::canProxyMethod($reflected));
+  }
 
-    public static function getProxiedPropertiesExceptionDataprovider()
-    {
-        return array(
-            'Unknown Property' => array('Unknown Property'),
-        );
-    }
+  /*************************************************************************/
+  /* Dataprovider
+  /*************************************************************************/
 
-    public static function getProxiedPropertiesDataprovider()
-    {
-        return array(
-            'with constructor' => array(
-                "public \$nervs = array();\npublic \$mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );\npublic \$myPrivate;\n",
-                '\lapistano\Tests\ProxyObject\DummyNS'
-            ),
-            'without constructor' => array(
-                "public \$nervs = array();\npublic \$myPrivate = array();\n",
-                '\lapistano\Tests\ProxyObject\DummyNSnoConstruct'
-            ),
-        );
-    }
+  public static function canProxyMethodDataprovider()
+  {
+    return array(
+      'final method'  => array( 'armsFinal' ),
+      'static method' => array( 'arms' ),
+      'public method' => array( 'getArms' ),
+    );
+  }
 
-    public static function getArgumentDeclarationDataprovider()
-    {
-        return array(
-            'array' => array("array \$arms = array (\n)", 'setArms'),
-            'interface/class' => array('\stdClass $dom', 'getArmNS'),
-            'plain parameter' => array('$position, $foo = \'\'', 'getArm'),
-        );
-    }
+  public static function arrayToStringDataprovider()
+  {
+    return array(
+      'one level'   => array(
+        "0 => 'Tux', 1 => 'Beastie', ",
+        array(
+          'Tux',
+          'Beastie'
+        )
+      ),
+      'two level'   => array(
+        "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => 'Foo', ",
+        array(
+          'mascotts' => array(
+            'Tux',
+            'Beastie'
+          ),
+          'Foo'
+        )
+      ),
+      'mixed level' => array(
+        "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => array (0 => 'Foo', ), ",
+        array(
+          'mascotts' => array(
+            'Tux',
+            'Beastie'
+          ),
+          array( 'Foo' )
+        )
+      ),
+    );
+  }
 
-    public static function generateProxyExpectingExceptionDataprovider()
-    {
-        return array(
-            'not existing class' => array('NotExistingClass', 'getArm'),
-            'final class' => array('finalDummy', 'getArm'),
-            'interface' => array('DummyInterface', 'test'),
-            'final method' => array('\lapistano\Tests\ProxyObject\DummyNS', 'armsFinal'),
-        );
-    }
+  public static function getProxiedPropertiesExceptionDataprovider()
+  {
+    return array(
+      'Unknown Property' => array( 'Unknown Property' ),
+    );
+  }
+
+  public static function getProxiedPropertiesDataprovider()
+  {
+    return array(
+      'with constructor'    => array(
+        "public \$nervs = array();\npublic \$mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );\npublic \$myPrivate;\n",
+        '\lapistano\Tests\ProxyObject\DummyNS'
+      ),
+      'without constructor' => array(
+        "public \$nervs = array();\npublic \$myPrivate = array();\n",
+        '\lapistano\Tests\ProxyObject\DummyNSnoConstruct'
+      ),
+    );
+  }
+
+  public static function getArgumentDeclarationDataprovider()
+  {
+    return array(
+      'array'           => array(
+        "array \$arms = array (\n)",
+        'setArms'
+      ),
+      'interface/class' => array(
+        '\stdClass $dom',
+        'getArmNS'
+      ),
+      'plain parameter' => array(
+        '$position, $foo = \'\'',
+        'getArm'
+      ),
+    );
+  }
+
+  public static function generateProxyExpectingExceptionDataprovider()
+  {
+    return array(
+      'not existing class' => array(
+        'NotExistingClass',
+        'getArm'
+      ),
+      'final class'        => array(
+        'finalDummy',
+        'getArm'
+      ),
+      'interface'          => array(
+        'DummyInterface',
+        'test'
+      ),
+      'final method'       => array(
+        '\lapistano\Tests\ProxyObject\DummyNS',
+        'armsFinal'
+      ),
+    );
+  }
 }
 
 class GeneratorProxy extends \lapistano\ProxyObject\Generator
 {
-    public static function getProxiedProperties($fullClassName, \ReflectionClass $class, array $properties = null)
-    {
-        return parent::getProxiedProperties($fullClassName, $class, $properties);
-    }
+  public static function getProxiedProperties($fullClassName, \ReflectionClass $class, array $properties = null)
+  {
+    return parent::getProxiedProperties($fullClassName, $class, $properties);
+  }
 
-    public static function canProxyMethod(\ReflectionMethod $method)
-    {
-        return parent::canProxyMethod($method);
-    }
+  public static function canProxyMethod(\ReflectionMethod $method)
+  {
+    return parent::canProxyMethod($method);
+  }
 
-    public function reflectMethods(array $methods, \ReflectionClass $class, $originalClassName)
-    {
-        return parent::reflectMethods($methods, $class, $originalClassName);
-    }
+  public function reflectMethods(array $methods, \ReflectionClass $class, $originalClassName)
+  {
+    return parent::reflectMethods($methods, $class, $originalClassName);
+  }
 
-    public static function generateProxy($originalClassName, array $methods = null,
-                                         array $properties = null, $proxyClassName = '', $callAutoload = false)
-    {
-        return parent::generateProxy($originalClassName, $methods, $properties, $proxyClassName, $callAutoload);
-    }
+  public static function generateProxy($originalClassName, array $methods = null, array $properties = null, $proxyClassName = '', $callAutoload = false)
+  {
+    return parent::generateProxy($originalClassName, $methods, $properties, $proxyClassName, $callAutoload);
+  }
 
-    public static function getArgumentDeclaration(\ReflectionMethod $method)
-    {
-        return parent::getArgumentDeclaration($method);
-    }
+  public static function getArgumentDeclaration(\ReflectionMethod $method)
+  {
+    return parent::getArgumentDeclaration($method);
+  }
 
-    public static function getInstance(\ReflectionClass $class)
-    {
-        return parent::getInstance($class);
-    }
+  public static function getInstance(\ReflectionClass $class)
+  {
+    return parent::getInstance($class);
+  }
 
-    public static function arrayToString(array $array)
-    {
-        return parent::arrayToString($array);
-    }
-
+  public static function arrayToString(array $array)
+  {
+    return parent::arrayToString($array);
+  }
 }
