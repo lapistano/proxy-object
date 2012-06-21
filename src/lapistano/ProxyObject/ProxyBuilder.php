@@ -101,10 +101,10 @@ class ProxyBuilder
       $this->className, $this->methods, $this->properties, $this->proxyClassName, $this->autoload
     );
 
+    $classname = $proxyClass['proxyClassName'];
+
     if (!empty($proxyClass['namespaceName'])) {
       $classname = $proxyClass['namespaceName'] . '\\' . $proxyClass['proxyClassName'];
-    } else {
-      $classname = $proxyClass['proxyClassName'];
     }
 
     if (!class_exists($classname, false)) {
@@ -115,13 +115,14 @@ class ProxyBuilder
 
       if (empty($this->constructorArgs)) {
         return new $classname();
-      } else {
-        $proxy = new \ReflectionClass($classname);
-        return $proxy->newInstanceArgs($this->constructorArgs);
       }
-    } else {
-      return $this->getInstanceOf($classname);
+
+      $proxy = new \ReflectionClass($classname);
+      return $proxy->newInstanceArgs($this->constructorArgs);
+
     }
+
+    return $this->getInstanceOf($classname);
   }
 
   /**

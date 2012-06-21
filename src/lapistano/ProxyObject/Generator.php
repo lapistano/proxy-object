@@ -277,17 +277,22 @@ class Generator
         $proxiedProperties .= self::generateProxiedPropertyDefinition($templateDir, $property, $class);
       }
     } else {
+
       foreach ($properties as $propertyName) {
+
         if ($class->hasProperty($propertyName)) {
           $property = $class->getProperty($propertyName);
           $proxiedProperties .= self::generateProxiedPropertyDefinition($templateDir, $property, $class);
-        } else {
-          throw new \PHPUnit_Framework_Exception(sprintf(
-              'Class "%s" has no protected or private property "%s".', $fullClassName, $propertyName
-            ));
+          continue;
         }
+
+        throw new \PHPUnit_Framework_Exception(sprintf(
+            'Class "%s" has no protected or private property "%s".', $fullClassName, $propertyName
+          ));
+
       }
     }
+
     return $proxiedProperties;
   }
 
@@ -327,6 +332,7 @@ class Generator
         'property_value' => $value
       )
     );
+
     return $template->render();
   }
 
@@ -347,21 +353,28 @@ class Generator
     $templateDir    = __DIR__ . DIRECTORY_SEPARATOR . 'Generator' . DIRECTORY_SEPARATOR;
 
     if (is_array($methods) && count($methods) > 0) {
+
       foreach ($methods as $methodName) {
+
         if ($class->hasMethod($methodName)) {
+
           $method = $class->getMethod($methodName);
+
           if (self::canProxyMethod($method)) {
             $proxyMethods[] = $method;
-          } else {
-            throw new \PHPUnit_Framework_Exception(sprintf(
-                'Can not proxy method "%s" of class "%s".', $methodName, $fullClassName
-              ));
+            continue;
           }
-        } else {
+
           throw new \PHPUnit_Framework_Exception(sprintf(
-              'Class "%s" has no protected method "%s".', $fullClassName, $methodName
+              'Can not proxy method "%s" of class "%s".', $methodName, $fullClassName
             ));
+
         }
+
+        throw new \PHPUnit_Framework_Exception(sprintf(
+            'Class "%s" has no protected method "%s".', $fullClassName, $methodName
+          ));
+
       }
     } else {
       $proxyMethods = $class->getMethods(\ReflectionMethod::IS_PROTECTED);
@@ -376,6 +389,7 @@ class Generator
     foreach ($proxyMethods as $method) {
       $proxiedMethods .= self::generateProxiedMethodDefinition($templateDir, $method);
     }
+
     return $proxiedMethods;
   }
 
@@ -389,6 +403,8 @@ class Generator
   protected static function generateProxyClassName($originalClassName, $proxyClassName)
   {
     $classNameParts = explode('\\', $originalClassName);
+    $namespaceName  = '';
+    $fullClassName  = $originalClassName;
 
     if (count($classNameParts) > 1) {
       $originalClassName = array_pop($classNameParts);
@@ -397,9 +413,6 @@ class Generator
 
       // eval does identifies namespaces with leading backslash as constant.
       $namespaceName = (0 === stripos($namespaceName, '\\') ? substr($namespaceName, 1) : $namespaceName);
-    } else {
-      $namespaceName = '';
-      $fullClassName = $originalClassName;
     }
 
     if ($proxyClassName == '') {
@@ -425,10 +438,10 @@ class Generator
    */
   protected static function generateProxiedMethodDefinition($templateDir, \ReflectionMethod $method)
   {
+    $reference = '';
+
     if ($method->returnsReference()) {
       $reference = '&';
-    } else {
-      $reference = '';
     }
 
     $template = self::createTemplateObject(
@@ -443,6 +456,7 @@ class Generator
         'reference'             => $reference
       )
     );
+
     return $template->render();
   }
 
@@ -461,11 +475,14 @@ class Generator
     $parameters   = explode(', ', \PHPUnit_Util_Class::getMethodParameters($method));
 
     foreach ($parameters as $parameter) {
+
       if (0 < strpos(trim($parameter), ' $') && false === strpos($parameter, 'array')) {
         $declarations[] = '\\' . $parameter;
-      } else {
-        $declarations[] = $parameter;
+        continue;
       }
+
+      $declarations[] = $parameter;
+
     }
     return implode(', ', $declarations);
   }
@@ -522,8 +539,10 @@ class Generator
    */
   protected static function arrayToString(array $value)
   {
-    if (empty($value))
+    if (empty($value)) {
       return '';
+    }
+
     return self::traverseStructure(new \RecursiveArrayIterator($value));
   }
 
@@ -537,6 +556,7 @@ class Generator
   {
     $children = '';
     while ($iterator->valid()) {
+
       if ($iterator->hasChildren()) {
         $current = 'array (' . self::traverseStructure($iterator->getChildren()) . '), ';
       } else {
@@ -550,6 +570,7 @@ class Generator
       } else {
         $children .= "'" . $key . "' => " . $current;
       }
+
       $iterator->next();
     }
     return $children;
