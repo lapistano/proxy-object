@@ -44,29 +44,28 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
 
     public function testProxyMemberOfClassWithNoHiddenMethod()
     {
-        $proxy = new ProxyBuilder('DummyNoProtectedMethods');
-        $proxyDummyNS = $proxy
-            ->setProperties(array('mascotts'))
-            ->getProxy();
+        $proxy        = new ProxyBuilder('DummyNoProtectedMethods');
+        $proxyDummyNS = $proxy->setProperties(array( 'mascotts' ))->getProxy();
         $this->assertInternalType('array', $proxyDummyNS->mascotts);
     }
 
     public function testGetCompleteProxyFromClass()
     {
-        $proxy = new ProxyBuilder('Dummy');
-        $proxyDummy = $proxy
-            ->setMethods(array('getArm'))
-            ->getProxy();
+        $proxy      = new ProxyBuilder('Dummy');
+        $proxyDummy = $proxy->setMethods(array( 'getArm' ))->getProxy();
         $this->assertEquals('left arm', $proxyDummy->getArm('left'));
         $this->assertEquals('right arm', $proxyDummy->getArm('right'));
     }
 
     public function testGetCompleteProxyFromNamespacedClass()
     {
-        $proxy = new ProxyBuilder('\lapistano\Tests\ProxyObject\DummyNS');
-        $proxyDummyNS = $proxy
-            ->setMethods(array('getArm', 'getArmNS'))
-            ->getProxy();
+        $proxy        = new ProxyBuilder('\lapistano\Tests\ProxyObject\DummyNS');
+        $proxyDummyNS = $proxy->setMethods(
+            array(
+                'getArm',
+                'getArmNS'
+            )
+        )->getProxy();
         $this->assertEquals('left arm', $proxyDummyNS->getArmNS(new \stdClass));
         $this->assertEquals('left arm', $proxyDummyNS->getArm('left'));
         $this->assertEquals('right arm', $proxyDummyNS->getArm('right'));
@@ -74,11 +73,13 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCompleteProxyFromNamespacedClassSelectedProperty()
     {
-        $proxy = new ProxyBuilder('\lapistano\Tests\ProxyObject\DummyNS');
-        $proxyDummyNS = $proxy
-            ->setMethods(array('getArm', 'getArmNS'))
-            ->setProperties(array('myPrivate'))
-            ->getProxy();
+        $proxy        = new ProxyBuilder('\lapistano\Tests\ProxyObject\DummyNS');
+        $proxyDummyNS = $proxy->setMethods(
+            array(
+                'getArm',
+                'getArmNS'
+            )
+        )->setProperties(array( 'myPrivate' ))->getProxy();
 
         $proxyDummyNS->myPrivate = 'beastie';
 
@@ -86,16 +87,18 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('left arm', $proxyDummyNS->getArm('left'));
         $this->assertEquals('right arm', $proxyDummyNS->getArm('right'));
         $this->assertEquals('beastie', $proxyDummyNS->myPrivate);
-
     }
 
     public function testGetProxyOfSingleMethodFromNamespacedClass()
     {
-        $proxy = new ProxyBuilder('\lapistano\Tests\ProxyObject\DummyNSwithStatic');
-        $proxyDummyNS = $proxy
-            ->setMethods(array('getArm'))
-            ->setProperties(array('myPrivate', 'myProtected', 'myProtectedFloat'))
-            ->getProxy();
+        $proxy        = new ProxyBuilder('\lapistano\Tests\ProxyObject\DummyNSwithStatic');
+        $proxyDummyNS = $proxy->setMethods(array( 'getArm' ))->setProperties(
+            array(
+                'myPrivate',
+                'myProtected',
+                'myProtectedFloat'
+            )
+        )->getProxy();
         $this->assertEquals('left arm', $proxyDummyNS->getArm('left'));
         $this->assertEquals('right arm', $proxyDummyNS->getArm('right'));
     }
@@ -106,18 +109,14 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetProxyExpectingPHPUnit_Framework_Exception($class, $methods)
     {
-        $proxy = new ProxyBuilder($class);
-        $proxyDummyNS = $proxy
-            ->setMethods($methods)
-            ->getProxy();
+        $proxy        = new ProxyBuilder($class);
+        $proxyDummyNS = $proxy->setMethods($methods)->getProxy();
     }
 
     public function testProxyMemberOfClassWithNoHiddenMember()
     {
-        $proxy = new ProxyBuilder('DummyNoProtectedMembers');
-        $proxyDummyNS = $proxy
-            ->setMethods(array('getArm'))
-            ->getProxy();
+        $proxy        = new ProxyBuilder('DummyNoProtectedMembers');
+        $proxyDummyNS = $proxy->setMethods(array( 'getArm' ))->getProxy();
         $this->assertEquals('left arm', $proxyDummyNS->getArm('left'));
     }
 
@@ -128,9 +127,18 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
     public static function getProxyExpectingPHPUnit_Framework_Exception()
     {
         return array(
-            'final method' => array('\lapistano\Tests\ProxyObject\DummyNS', array('armsFinal')),
-            'no protected methods' => array('\DummyAllPublic', array()),
-            'no protected methods with unknown method' => array('\DummyAllPublic', array('unknown method')),
+            'final method'                             => array(
+                '\lapistano\Tests\ProxyObject\DummyNS',
+                array( 'armsFinal' )
+            ),
+            'no protected methods'                     => array(
+                '\DummyAllPublic',
+                array()
+            ),
+            'no protected methods with unknown method' => array(
+                '\DummyAllPublic',
+                array( 'unknown method' )
+            ),
         );
     }
 }

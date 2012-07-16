@@ -53,7 +53,12 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
     public function getProxyBuilderObject($className = '\lapistano\Tests\ProxyObject\DummyNS')
     {
         $pb = new ProxyBuilder($className);
-        return $pb->setMethods(array('getArm', 'getArmNS'));
+        return $pb->setMethods(
+            array(
+                'getArm',
+                'getArmNS'
+            )
+        );
     }
 
     /*************************************************************************/
@@ -66,8 +71,7 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
     public function testGetProxy()
     {
         $this->assertInstanceOf(
-            '\lapistano\Tests\ProxyObject\DummyNS',
-            $this->getProxyBuilderObject('\lapistano\Tests\ProxyObject\DummyNS')->getProxy()
+            '\lapistano\Tests\ProxyObject\DummyNS', $this->getProxyBuilderObject('\lapistano\Tests\ProxyObject\DummyNS')->getProxy()
         );
     }
 
@@ -86,8 +90,7 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
     public function testGetProxyBuilderNamespaced()
     {
         $this->assertInstanceOf(
-            '\lapistano\Tests\ProxyObject\DummyNS',
-            $this->getProxyBuilderObject('\lapistano\Tests\ProxyObject\DummyNS')->getProxy()
+            '\lapistano\Tests\ProxyObject\DummyNS', $this->getProxyBuilderObject('\lapistano\Tests\ProxyObject\DummyNS')->getProxy()
         );
     }
 
@@ -96,9 +99,7 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetProxyWithConstructorArguments()
     {
-        $actual = $this->getProxyBuilderObject()
-            ->setConstructorArgs(array(array()))
-            ->getProxy();
+        $actual = $this->getProxyBuilderObject()->setConstructorArgs(array( array() ))->getProxy();
         $this->assertInstanceOf('\lapistano\Tests\ProxyObject\DummyNS', $actual);
     }
 
@@ -107,9 +108,12 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetProxyByReflection()
     {
-        $actual = $this->getProxyBuilderObject()
-            ->setProperties(array('myPrivate', 'nervs'))
-            ->getProxy();
+        $actual = $this->getProxyBuilderObject()->setProperties(
+            array(
+                'myPrivate',
+                'nervs'
+            )
+        )->getProxy();
         $this->assertInstanceOf('\lapistano\Tests\ProxyObject\DummyNS', $actual);
     }
 
@@ -118,9 +122,7 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetProxyDisableOriginalConstructor()
     {
-        $actual = $this->getProxyBuilderObject()
-            ->disableOriginalConstructor()
-            ->getProxy();
+        $actual = $this->getProxyBuilderObject()->disableOriginalConstructor()->getProxy();
         $this->assertInstanceOf('\lapistano\Tests\ProxyObject\DummyNS', $actual);
     }
 
@@ -130,11 +132,15 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
     public function testExposeInheritedMember()
     {
         $proxy = new ProxyBuilder('\ExtendsDummy');
-        $actual = $proxy
-            ->setProperties(array('mascotts'))
-            ->getProxy();
+        $actual = $proxy->setProperties(array( 'mascotts' ))->getProxy();
 
-        $this->assertEquals(array('Tux', 'Beastie', 'Gnu'), $actual->mascotts);
+        $this->assertEquals(
+            array(
+                'Tux',
+                'Beastie',
+                'Gnu'
+            ), $actual->mascotts
+        );
     }
 
     /**
@@ -152,9 +158,7 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetProxyMethod()
     {
-        $proxy = $this->getProxyBuilderObject()
-            ->setMethods(array('getArm'))
-            ->getProxy();
+        $proxy = $this->getProxyBuilderObject()->setMethods(array( 'getArm' ))->getProxy();
 
         $this->assertEquals('right arm', $proxy->getArm('right'));
     }
@@ -165,9 +169,7 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetProxyProperty()
     {
-        $proxy = $this->getProxyBuilderObject()
-            ->setProperties(array('myPrivate'))
-            ->getProxy();
+        $proxy = $this->getProxyBuilderObject()->setProperties(array( 'myPrivate' ))->getProxy();
 
         $proxy->myPrivate = 'beastie';
         $this->assertEquals('beastie', $proxy->myPrivate);
@@ -188,10 +190,12 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetConstructorArgs()
     {
-        $args = array('beastie', 'tux');
+        $args = array(
+            'beastie',
+            'tux'
+        );
 
-        $actual = $this->getProxyBuilderObject()
-            ->setConstructorArgs($args);
+        $actual = $this->getProxyBuilderObject()->setConstructorArgs($args);
 
         $this->assertInstanceOf('\lapistano\ProxyObject\ProxyBuilder', $actual);
         $this->assertAttributeEquals($args, 'constructorArgs', $actual);
@@ -203,8 +207,7 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
     public function testSetProxyClassName()
     {
         $classname = 'CustomClassNameProxy';
-        $actual = $this->getProxyBuilderObject()
-            ->setProxyClassName($classname);
+        $actual    = $this->getProxyBuilderObject()->setProxyClassName($classname);
 
         $this->assertInstanceOf('\lapistano\ProxyObject\ProxyBuilder', $actual);
         $this->assertAttributeEquals($classname, 'mockClassName', $actual);
@@ -235,13 +238,10 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \lapistano\ProxyObject\ProxyBuilder::getInstanceOf
      */
-    public function testGetInstanceOf() 
+    public function testGetInstanceOf()
     {
         $proxyBuilder = new ProxyBuilder('\lapistano\ProxyObject\ProxyBuilder');
-        $proxy = $proxyBuilder
-            ->disableOriginalConstructor()
-            ->setMethods(array('getInstanceOf'))
-            ->getProxy();
+        $proxy        = $proxyBuilder->disableOriginalConstructor()->setMethods(array( 'getInstanceOf' ))->getProxy();
         $this->assertInstanceOf('stdClass', $proxy->getInstanceOf('stdClass'));
     }
 }
