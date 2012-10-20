@@ -235,7 +235,7 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \lapistano\ProxyObject\ProxyBuilder::getInstanceOf
      */
-    public function testGetInstanceOf() 
+    public function testGetInstanceOf()
     {
         $proxyBuilder = new ProxyBuilder('\lapistano\ProxyObject\ProxyBuilder');
         $proxy = $proxyBuilder

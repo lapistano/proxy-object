@@ -101,10 +101,10 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getProxyExpectingPHPUnit_Framework_Exception
-     * @expectedException  \PHPUnit_Framework_Exception
+     * @dataProvider getProxyExpectingGeneratorException
+     * @expectedException  \lapistano\ProxyObject\GeneratorException
      */
-    public function testGetProxyExpectingPHPUnit_Framework_Exception($class, $methods)
+    public function testGetProxyExpectingGeneratorException($class, $methods)
     {
         $proxy = new ProxyBuilder($class);
         $proxyDummyNS = $proxy
@@ -125,7 +125,7 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
     /* Dataprovider & callbacks
     /*************************************************************************/
 
-    public static function getProxyExpectingPHPUnit_Framework_Exception()
+    public static function getProxyExpectingGeneratorException()
     {
         return array(
             'final method' => array('\lapistano\Tests\ProxyObject\DummyNS', array('armsFinal')),
