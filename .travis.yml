@@ -1,5 +1,9 @@
 language: php
 
+before_install:
+  - curl -s http://getcomposer.org/installer | php -- --install-dir=./bin
+  - php ./bin/composer.phar install --dev
+
 php:
   - 5.3
   - 5.4
