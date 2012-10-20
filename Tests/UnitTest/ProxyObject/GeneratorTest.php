@@ -259,6 +259,19 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(GeneratorProxy::canProxyMethod($reflected));
     }
 
+    /**
+     * @covers \lapistano\ProxyObject\Generator::canProxyMethods
+     */
+    public function testCanProxyMethods()
+    {
+        $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
+        $methods = $class->getMethods(\ReflectionMethod::IS_PROTECTED);
+
+        $this->assertCount(3, GeneratorProxy::canProxyMethods($methods));
+
+    }
+
+
     /*************************************************************************/
     /* Dataprovider
     /*************************************************************************/
@@ -377,6 +390,11 @@ class GeneratorProxy extends \lapistano\ProxyObject\Generator
     public static function canProxyMethod(\ReflectionMethod $method)
     {
         return parent::canProxyMethod($method);
+    }
+
+    public static function canProxyMethods(array $methods)
+    {
+        return parent::canProxyMethods($methods);
     }
 
     public function reflectMethods(array $methods, \ReflectionClass $class, $originalClassName)

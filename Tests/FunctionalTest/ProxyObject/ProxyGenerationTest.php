@@ -120,6 +120,15 @@ class ProxyGenerationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('left arm', $proxyDummyNS->getArm('left'));
     }
 
+    /**
+     * @expectedException \lapistano\ProxyObject\GeneratorException
+     */
+    public function testGetProxyOfClassWithStaticProtectedMethod()
+    {
+        $proxy = new ProxyBuilder('\DummyWithNoProxyableProtectedMethods');
+        $proxiedClass = $proxy->getProxy();
+    }
+
     /*************************************************************************/
     /* Dataprovider & callbacks
     /*************************************************************************/

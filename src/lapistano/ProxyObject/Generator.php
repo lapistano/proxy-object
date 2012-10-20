@@ -399,9 +399,10 @@ class Generator
                 );
             }
         } else {
-            $proxyMethods = $class->getMethods(\ReflectionMethod::IS_PROTECTED);
 
-            if (!(is_array($proxyMethods) && count($proxyMethods) > 0) && self::$exposeMethods === true) {
+            $proxyMethods = self::canProxyMethods($class->getMethods(\ReflectionMethod::IS_PROTECTED));
+
+            if (empty($proxyMethods ) && self::$exposeProperties === false) {
                 throw new GeneratorException(
                     sprintf('Class "%s" has no protected methods.', $fullClassName),
                     GeneratorException::NO_PROTECTED_METHOD_DEFINED
@@ -538,6 +539,32 @@ class Generator
         }
 
         return false;
+    }
+
+    /**
+     * Filters the list of ReflectionMethods down to those actually proxyable.
+     *
+     * Proxyable methods are those which are NOT:
+     *  - constructor
+     *  - final method
+     *  - static method
+     *  - members of the self::blacklist
+     *
+     * @param array $methods
+     *
+     * @return \ReflectionMethod[]
+     */
+    protected static function canProxyMethods(array $methods)
+    {
+        $proxyMethods = array();
+
+        foreach ($methods as $method) {
+            if (self::canProxyMethod($method)) {
+                $proxyMethods[] = $method;
+            }
+        }
+
+        return $proxyMethods;
     }
 
     /**

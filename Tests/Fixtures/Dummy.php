@@ -87,6 +87,25 @@ namespace {
 
     }
 
+    class DummyWithNoProxyableProtectedMethods
+    {
+
+        public function tuxPublic()
+        {
+            return;
+        }
+
+        protected static function tuxStatic()
+        {
+            return;
+        }
+
+        final protected function tuxFinal()
+        {
+            return;
+        }
+    }
+
 }
 
 namespace lapistano\Tests\ProxyObject {
