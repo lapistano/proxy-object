@@ -225,31 +225,34 @@ class Generator
         );
 
         if (interface_exists($proxyClassName['fullClassName'], $callAutoload)) {
-            throw new \PHPUnit_Framework_Exception(
+            throw new GeneratorException(
                 sprintf(
                     '"%s" is an interface.',
                     $proxyClassName['fullClassName']
-                )
+                ),
+                GeneratorException::IS_INTERFACE
             );
         }
 
         if (!class_exists($proxyClassName['fullClassName'], $callAutoload)) {
-            throw new \PHPUnit_Framework_Exception(
+            throw new GeneratorException(
                 sprintf(
                     'Class "%s" does not exists.',
                     $proxyClassName['fullClassName']
-                )
+                ),
+                GeneratorException::CLASS_NOT_FOUND
             );
         }
 
         $class = new \ReflectionClass($proxyClassName['fullClassName']);
 
         if ($class->isFinal()) {
-            throw new \PHPUnit_Framework_Exception(
+            throw new GeneratorException(
                 sprintf(
                     'Class "%s" is declared "final". Cannot create proxy.',
                     $proxyClassName['fullClassName']
-                )
+                ),
+                GeneratorException::CLASS_IS_FINAL
             );
         }
 
@@ -297,12 +300,13 @@ class Generator
                     $property = $class->getProperty($propertyName);
                     $proxiedProperties .= self::generateProxiedPropertyDefinition($templateDir, $property, $class);
                 } else {
-                    throw new \PHPUnit_Framework_Exception(
+                    throw new GeneratorException(
                         sprintf(
                             'Class "%s" has no protected or private property "%s".',
                             $fullClassName,
                             $propertyName
-                        )
+                        ),
+                        GeneratorException::NO_PROTECTED_OR_PRIVATE_PROPERTY_DEFINED
                     );
                 }
             }
@@ -358,7 +362,7 @@ class Generator
      * @param array $methods
      * @return array Information about the method to be proxied.
      *
-     * @throws \PHPUnit_Framework_Exception
+     * @throws GeneratorException
      */
     protected static function getProxiedMethods($fullClassName, \ReflectionClass $class, array $methods = null)
     {
@@ -372,21 +376,23 @@ class Generator
                     if (self::canProxyMethod($method)) {
                         $proxyMethods[] = $method;
                     } else {
-                        throw new \PHPUnit_Framework_Exception(
+                        throw new GeneratorException(
                             sprintf(
                                 'Can not proxy method "%s" of class "%s".',
                                 $methodName,
                                 $fullClassName
-                            )
+                            ),
+                            GeneratorException::CANNOT_PROXY_METHOD
                         );
                     }
                 } else {
-                    throw new \PHPUnit_Framework_Exception(
+                    throw new GeneratorException(
                         sprintf(
                             'Class "%s" has no protected method "%s".',
                             $fullClassName,
                             $methodName
-                        )
+                        ),
+                        GeneratorException::NO_PROTECTED_METHOD_DEFINED
                     );
                 }
             }
@@ -394,11 +400,12 @@ class Generator
             $proxyMethods = $class->getMethods(\ReflectionMethod::IS_PROTECTED);
 
             if (!(is_array($proxyMethods) && count($proxyMethods) > 0) && self::$exposeMethods === true) {
-                throw new \PHPUnit_Framework_Exception(
+                throw new GeneratorException (
                     sprintf(
                         'Class "%s" has no protected methods.',
                         $fullClassName
-                    )
+                    ),
+                    GeneratorException::NO_PROTECTED_METHOD_DEFINED
                 );
             }
         }
@@ -550,7 +557,7 @@ class Generator
      * @param array $value
      * @return string
      */
-    protected static function arrayToString(array $value) 
+    protected static function arrayToString(array $value)
     {
         if (empty($value)) return '';
         return self::traverseStructure(new \RecursiveArrayIterator($value));
@@ -562,7 +569,7 @@ class Generator
      * @param \RecurciveIterator $iterator
      * @return string
      */
-    protected static function traverseStructure($iterator) 
+    protected static function traverseStructure($iterator)
     {
         $children = '';
         while ($iterator->valid()) {
@@ -572,7 +579,7 @@ class Generator
             else {
                 $current = "'" . $iterator->current() . "', ";
             }
-            
+
             $key = $iterator->key();
 
             if (is_numeric($key)) {
@@ -583,5 +590,5 @@ class Generator
             $iterator->next();
         }
         return $children;
-    } 
+    }
 }

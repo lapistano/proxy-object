@@ -216,9 +216,9 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
     public function testDisableOriginalConstructor()
     {
         $proxyBuilder = $this->getProxyBuilderObject('\lapistano\Tests\ProxyObject\DummyNS');
-        $this->assertAttributeSame(true, 'originalConstructor', $proxyBuilder);
+        $this->assertAttributeSame(true, 'invokeOriginalConstructor', $proxyBuilder);
         $this->assertInstanceOf('\lapistano\ProxyObject\ProxyBuilder', $proxyBuilder->disableOriginalConstructor());
-        $this->assertAttributeSame(false, 'originalConstructor', $proxyBuilder);
+        $this->assertAttributeSame(false, 'invokeOriginalConstructor', $proxyBuilder);
     }
 
     /**
@@ -235,7 +235,7 @@ class ProxyBuilderTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \lapistano\ProxyObject\ProxyBuilder::getInstanceOf
      */
-    public function testGetInstanceOf() 
+    public function testGetInstanceOf()
     {
         $proxyBuilder = new ProxyBuilder('\lapistano\ProxyObject\ProxyBuilder');
         $proxy = $proxyBuilder

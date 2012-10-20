@@ -73,7 +73,7 @@ class ProxyBuilder
     /**
      * @var boolean
      */
-    protected $originalConstructor = true;
+    protected $invokeOriginalConstructor = true;
 
     /**
      * @param string $className
@@ -106,7 +106,7 @@ class ProxyBuilder
             eval($proxyClass['code']);
         }
 
-        if ($this->originalConstructor
+        if ($this->invokeOriginalConstructor
             && !interface_exists($this->className, $this->autoload)) {
 
             if (empty($this->constructorArgs)) {
@@ -179,7 +179,7 @@ class ProxyBuilder
      */
     public function disableOriginalConstructor()
     {
-        $this->originalConstructor = false;
+        $this->invokeOriginalConstructor = false;
 
         return $this;
     }

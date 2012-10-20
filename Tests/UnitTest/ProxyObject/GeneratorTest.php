@@ -99,7 +99,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_Exception
+     * @expectedException \lapistano\ProxyObject\GeneratorException
      * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
     public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethod()
@@ -129,7 +129,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_Exception
+     * @expectedException \lapistano\ProxyObject\GeneratorException
      * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
     public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethods()
@@ -138,7 +138,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_Exception
+     * @expectedException \lapistano\ProxyObject\GeneratorException
      * @dataProvider generateProxyExpectingExceptionDataprovider
      * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
@@ -202,7 +202,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getProxiedPropertiesExceptionDataprovider
-     * @expectedException \PHPUnit_Framework_Exception
+     * @expectedException \lapistano\ProxyObject\GeneratorException
      * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
      */
     public function testGetProxiedPropertiesExpectingPHPUnit_Framework_Exception($property)
