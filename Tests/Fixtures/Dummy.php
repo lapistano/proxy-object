@@ -4,7 +4,7 @@ namespace {
 
     class DummyNoProtectedMethods
     {
-        protected $mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );
+        protected $mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu',);
 
         public function test()
         {
@@ -28,7 +28,7 @@ namespace {
         public $arms = array('left' => 'left arm', 'right' => 'right arm');
 
         protected $nervs = array();
-        protected $mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );
+        protected $mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu',);
 
         protected function getArm($position)
         {
@@ -71,7 +71,7 @@ namespace {
     {
         protected $myProtected = 'tux';
 
-        public function __construct($beastie, array $os,\Countable $dummy )
+        public function __construct($beastie, array $os, \Countable $dummy)
         {
             return;
         }
@@ -97,7 +97,7 @@ namespace lapistano\Tests\ProxyObject {
         public $arms = array('left' => 'left arm', 'right' => 'right arm');
 
         protected $nervs = array();
-        protected $mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );
+        protected $mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu',);
 
         private $myPrivate;
 

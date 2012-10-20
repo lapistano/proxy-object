@@ -4,10 +4,10 @@
  *
  * Copyright (c) 2010-2011, Bastian Feder <github@bastian-feder.de>.
  * All rights reserved.
- * @license http://www.apache.org/licenses/LICENSE-2.0  Apache License Version 2.0, January 2004
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License Version 2.0, January 2004
+ *             Licensed under the Apache License, Version 2.0 (the "License");
+ *             you may not use this file except in compliance with the License.
+ *             You may obtain a copy of the License at
  *
  *       http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -18,10 +18,10 @@
  *   limitations under the License.
  *
  * @copyright  2010-2011 Bastian Feder <github@bastian-feder.de>
- * @author Bastian Feder <github@bastian-feder.de>
- * @license http://www.apache.org/licenses/LICENSE-2.0
- * @link https://github.com/lapistano/proxy-object
- * @package Unittests
+ * @author     Bastian Feder <github@bastian-feder.de>
+ * @license    http://www.apache.org/licenses/LICENSE-2.0
+ * @link       https://github.com/lapistano/proxy-object
+ * @package    Unittests
  * @subpackage ProxyObject
  */
 
@@ -33,12 +33,28 @@ use lapistano\ProxyObject\Generator;
  *
  *
  * @copyright  2010-2011 Bastian Feder <github@bastian-feder.de>
- * @author Bastian Feder <github@bastian-feder.de>
- * @license http://www.apache.org/licenses/LICENSE-2.0
- * @link https://github.com/lapistano/proxy-object
+ * @author     Bastian Feder <github@bastian-feder.de>
+ * @license    http://www.apache.org/licenses/LICENSE-2.0
+ * @link       https://github.com/lapistano/proxy-object
  */
 class GeneratorTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @param string $data
+     *
+     * @return mixed|string
+     */
+    protected function slag($data)
+    {
+        return str_replace(
+            array(
+                "\r",
+                "\r\n",
+                "\n",
+                "  "
+            ), "", $data
+        );
+    }
 
     /**
      * @covers \lapistano\ProxyObject\Generator::generate
@@ -46,19 +62,29 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     public function testGenerateWithPredefinedProxyName()
     {
         $expected = array(
-            'code' => "class DummyProxy extends Dummy\n".
-                      "{\n\n".
-                      "public \$nervs = array();\n".
-                      "public \$mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );\n\n\n".
-                      "public function getArm(\$position)\n".
-                      "    {\n".
-                      "        return parent::getArm(\$position);\n".
-                      "    }\n\n\n}\n",
+            'code' => "class DummyProxy extends Dummy\n"
+                . "{\n\n" . "public \$nervs = array();\n"
+                . "public \$mascotts = array(0 => 'Tux', 1 => 'Beastie', 2 => 'Gnu', );\n\n\n"
+                . "public function getArm(\$position)\n"
+                . "    {\n"
+                . "        return parent::getArm(\$position);\n"
+                . "    }\n\n\n}\n",
             'proxyClassName' => 'DummyProxy',
             'namespaceName' => ''
         );
+
         $generator = new Generator();
-        $this->assertEquals($expected, $generator::generate('Dummy', null, null, 'DummyProxy'));
+        $result = $generator::generate('Dummy', null, null, 'DummyProxy');
+
+        $this->assertArrayHasKey('code', $result);
+        $this->assertArrayHasKey('proxyClassName', $result);
+        $this->assertArrayHasKey('namespaceName', $result);
+
+        $this->assertEquals('DummyProxy', $result['proxyClassName']);
+
+        $this->assertEquals(
+            $this->slag($expected['code']), $this->slag($result['code'])
+        );
     }
 
     /**
@@ -104,13 +130,12 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethod()
     {
-        $expected = array (
+        $expected = array(
             "namespaceName" => "\lapistano\Tests\ProxyObject"
         );
 
         $actual = GeneratorProxy::generateProxy(
-            '\lapistano\Tests\ProxyObject\DummyNS',
-            array('arm')
+            '\lapistano\Tests\ProxyObject\DummyNS', array('arm')
         );
     }
 
@@ -119,7 +144,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testGenerateProxyAllProtectedMethods()
     {
-        $expected = array (
+        $expected = array(
             "namespaceName" => "\lapistano\Tests\ProxyObject"
         );
 
@@ -169,7 +194,9 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $class = new \ReflectionClass($className);
         $proxy = new GeneratorProxy();
 
-        $this->assertEquals($expected, $proxy::getProxiedProperties('DummyNS', $class));
+        $this->assertEquals(
+            $this->slag($expected), $this->slag($proxy::getProxiedProperties('DummyNS', $class))
+        );
     }
 
     /**
@@ -181,8 +208,8 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $proxy = new GeneratorProxy();
 
         $this->assertEquals(
-            'public $myPrivate;'."\n",
-            $proxy::getProxiedProperties('DummyNS', $class, array('myPrivate'))
+            $this->slag('public $myPrivate;' . "\n"),
+            $this->slag($proxy::getProxiedProperties('DummyNS', $class, array('myPrivate')))
         );
     }
 
@@ -195,8 +222,8 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $proxy = new GeneratorProxy();
 
         $this->assertEquals(
-            'public static $myStatic = \'tux\';'."\n",
-            $proxy::getProxiedProperties('DummyNSwithStatic', $class, array('myStatic'))
+            $this->slag('public static $myStatic = \'tux\';' . "\n"),
+            $this->slag($proxy::getProxiedProperties('DummyNSwithStatic', $class, array('myStatic')))
         );
     }
 
@@ -232,7 +259,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(GeneratorProxy::canProxyMethod($reflected));
     }
 
-
     /*************************************************************************/
     /* Dataprovider
     /*************************************************************************/
@@ -251,15 +277,30 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         return array(
             'one level' => array(
                 "0 => 'Tux', 1 => 'Beastie', ",
-                array('Tux', 'Beastie')
+                array(
+                    'Tux',
+                    'Beastie'
+                )
             ),
             'two level' => array(
                 "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => 'Foo', ",
-                array('mascotts' => array('Tux', 'Beastie'), 'Foo')
+                array(
+                    'mascotts' => array(
+                        'Tux',
+                        'Beastie'
+                    ),
+                    'Foo'
+                )
             ),
             'mixed level' => array(
                 "'mascotts' => array (0 => 'Tux', 1 => 'Beastie', ), 0 => array (0 => 'Foo', ), ",
-                array('mascotts' => array('Tux', 'Beastie'), array('Foo'))
+                array(
+                    'mascotts' => array(
+                        'Tux',
+                        'Beastie'
+                    ),
+                    array('Foo')
+                )
             ),
         );
     }
@@ -288,19 +329,40 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     public static function getArgumentDeclarationDataprovider()
     {
         return array(
-            'array' => array("array \$arms = array (\n)", 'setArms'),
-            'interface/class' => array('\stdClass $dom', 'getArmNS'),
-            'plain parameter' => array('$position, $foo = \'\'', 'getArm'),
+            'array' => array(
+                "array \$arms = array (\n)",
+                'setArms'
+            ),
+            'interface/class' => array(
+                '\stdClass $dom',
+                'getArmNS'
+            ),
+            'plain parameter' => array(
+                '$position, $foo = \'\'',
+                'getArm'
+            ),
         );
     }
 
     public static function generateProxyExpectingExceptionDataprovider()
     {
         return array(
-            'not existing class' => array('NotExistingClass', 'getArm'),
-            'final class' => array('finalDummy', 'getArm'),
-            'interface' => array('DummyInterface', 'test'),
-            'final method' => array('\lapistano\Tests\ProxyObject\DummyNS', 'armsFinal'),
+            'not existing class' => array(
+                'NotExistingClass',
+                'getArm'
+            ),
+            'final class' => array(
+                'finalDummy',
+                'getArm'
+            ),
+            'interface' => array(
+                'DummyInterface',
+                'test'
+            ),
+            'final method' => array(
+                '\lapistano\Tests\ProxyObject\DummyNS',
+                'armsFinal'
+            ),
         );
     }
 }
@@ -322,8 +384,8 @@ class GeneratorProxy extends \lapistano\ProxyObject\Generator
         return parent::reflectMethods($methods, $class, $originalClassName);
     }
 
-    public static function generateProxy($originalClassName, array $methods = null,
-                                         array $properties = null, $proxyClassName = '', $callAutoload = false)
+    public static function generateProxy($originalClassName, array $methods = null, array $properties = null,
+                                         $proxyClassName = '', $callAutoload = false)
     {
         return parent::generateProxy($originalClassName, $methods, $properties, $proxyClassName, $callAutoload);
     }
@@ -342,5 +404,4 @@ class GeneratorProxy extends \lapistano\ProxyObject\Generator
     {
         return parent::arrayToString($array);
     }
-
 }

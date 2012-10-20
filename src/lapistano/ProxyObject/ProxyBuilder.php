@@ -6,10 +6,10 @@
  *
  * Copyright (c) 2010-2011, Bastian Feder <github@bastian-feder.de>.
  * All rights reserved.
- * @license http://www.apache.org/licenses/LICENSE-2.0  Apache License Version 2.0, January 2004
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * @license    http://www.apache.org/licenses/LICENSE-2.0  Apache License Version 2.0, January 2004
+ *             Licensed under the Apache License, Version 2.0 (the "License");
+ *             you may not use this file except in compliance with the License.
+ *             You may obtain a copy of the License at
  *
  *       http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -20,10 +20,10 @@
  *   limitations under the License.
  *
  * @copyright  2010-2011 Bastian Feder <github@bastian-feder.de>
- * @author Bastian Feder <github@bastian-feder.de>
- * @license http://www.apache.org/licenses/LICENSE-2.0
- * @link https://github.com/lapistano/proxy-object
- * @package Unittests
+ * @author     Bastian Feder <github@bastian-feder.de>
+ * @license    http://www.apache.org/licenses/LICENSE-2.0
+ * @link       https://github.com/lapistano/proxy-object
+ * @package    Unittests
  * @subpackage ProxyObject
  */
 namespace lapistano\ProxyObject;
@@ -32,10 +32,10 @@ namespace lapistano\ProxyObject;
  * Implementation of the Builder pattern for Proxy objects.
  *
  * @copyright  2010-2011 Bastian Feder <github@bastian-feder.de>
- * @author Bastian Feder <github@bastian-feder.de>
- * @license http://www.apache.org/licenses/LICENSE-2.0
- * @link https://github.com/lapistano/proxy-object
- * @package Unittests
+ * @author     Bastian Feder <github@bastian-feder.de>
+ * @license    http://www.apache.org/licenses/LICENSE-2.0
+ * @link       https://github.com/lapistano/proxy-object
+ * @package    Unittests
  * @subpackage ProxyObject
  */
 class ProxyBuilder
@@ -76,6 +76,11 @@ class ProxyBuilder
     protected $invokeOriginalConstructor = true;
 
     /**
+     * @var string
+     */
+    protected $mockClassName;
+
+    /**
      * @param string $className
      */
     public function __construct($className)
@@ -90,40 +95,41 @@ class ProxyBuilder
      */
     public function getProxy()
     {
-        include_once(__DIR__.'/Generator.php');
+        include_once(__DIR__ . '/Generator.php');
 
         $proxyClass = Generator::generate(
             $this->className, $this->methods, $this->properties, $this->proxyClassName, $this->autoload
         );
 
+        $classname = $proxyClass['proxyClassName'];
+
         if (!empty($proxyClass['namespaceName'])) {
-            $classname = $proxyClass['namespaceName'].'\\'.$proxyClass['proxyClassName'];
-        } else {
-            $classname = $proxyClass['proxyClassName'];
+            $classname = $proxyClass['namespaceName'] . '\\' . $proxyClass['proxyClassName'];
         }
 
         if (!class_exists($classname, false)) {
             eval($proxyClass['code']);
         }
 
-        if ($this->invokeOriginalConstructor
-            && !interface_exists($this->className, $this->autoload)) {
+        if ($this->invokeOriginalConstructor && !interface_exists($this->className, $this->autoload)) {
 
             if (empty($this->constructorArgs)) {
                 return new $classname();
-            } else {
-                $proxy = new \ReflectionClass($classname);
-                return $proxy->newInstanceArgs($this->constructorArgs);
             }
-        } else {
-            return $this->getInstanceOf($classname);
+
+            $proxy = new \ReflectionClass($classname);
+
+            return $proxy->newInstanceArgs($this->constructorArgs);
         }
+
+        return $this->getInstanceOf($classname);
     }
 
     /**
      * Specifies the subset of methods to proxy. Default is to proxy all of them.
      *
      * @param  array $methods
+     *
      * @return ProxyBuilder
      */
     public function setMethods(array $methods)
@@ -137,6 +143,7 @@ class ProxyBuilder
      * Specifies the subset of properties to expose. Default is to proxy all of them.
      *
      * @param  array $properties
+     *
      * @return \lapistano\ProxyObject\ProxyBuilder
      */
     public function setProperties(array $properties)
@@ -150,6 +157,7 @@ class ProxyBuilder
      * Specifies the arguments for the constructor.
      *
      * @param  array $args
+     *
      * @return \lapistano\ProxyObject\ProxyBuilder
      */
     public function setConstructorArgs(array $args)
@@ -163,6 +171,7 @@ class ProxyBuilder
      * Specifies the name for the proxy class.
      *
      * @param string $name
+     *
      * @return \lapistano\ProxyObject\ProxyBuilder
      */
     public function setProxyClassName($name)
@@ -200,6 +209,7 @@ class ProxyBuilder
      * Provides an instance of the given class without invoking it's constructor
      *
      * @param string $classname
+     *
      * @return object
      */
     protected function getInstanceOf($classname)
@@ -207,17 +217,16 @@ class ProxyBuilder
         // As of PHP5.4 the reflection api provides a way to get an instance
         // of a class without invoking the constructor.
         if (method_exists('ReflectionClass', 'newInstanceWithoutConstructor')) {
-            $class = new \ReflectionClass($classname);
-            return $class->newInstanceWithoutConstructor();
+            $reflectedClass = new \ReflectionClass($classname);
+
+            return $reflectedClass->newInstanceWithoutConstructor();
         }
 
         // Use a trick to create a new object of a class
         // without invoking its constructor.
         return unserialize(
             sprintf(
-                'O:%d:"%s":0:{}',
-                strlen($classname),
-                $classname
+                'O:%d:"%s":0:{}', strlen($classname), $classname
             )
         );
     }
