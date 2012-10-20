@@ -7,3 +7,4 @@ build/
 phpdoc.dist.ini
 phpdoc.ini
 doc/html/
+vendor
