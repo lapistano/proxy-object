@@ -123,7 +123,7 @@ added the following method.
  * @param string $classname
  * @return lapistano\ProxyObject\ProxyBuilder
  */
-protected function getProxyBuilder($classname) {
+protected function getProxyObject($classname) {
     return new \lapistano\ProxyObject\ProxyBuilder($classname);
 }
 
