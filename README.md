@@ -123,19 +123,19 @@ added the following method.
  * @param string $classname
  * @return lapistano\ProxyObject\ProxyBuilder
  */
-protected function getProxyObject($classname) {
+protected function getProxyBuilder($classname) {
     return new \lapistano\ProxyObject\ProxyBuilder($classname);
 }
 
 ```
 
-Every of your test cases should now extend your own extended test case class so you can create a new proxy-object 
-by just calling `$this->getProxyObject('\\my\\namespace\\myclass');`. Used in one of the examples above it will look like this.
+Every of your test cases should now extend your own extended test case class so you can create a new proxy builder 
+by just calling `$this->getProxyBuilder('\\my\\namespace\\myclass');`. Used in one of the examples above it will look like this.
 
 ```php
 
 // generate and configure proxied object
-$proxiedObject = $this->getProxyObject('myClass')
+$proxiedObject = $this->getProxyBuilder('myClass')
     ->disableOriginalConstructor()
     ->getProxy();
 
