@@ -499,7 +499,7 @@ class Generator
     protected static function getArgumentDeclaration(\ReflectionMethod $method)
     {
         $declarations = array();
-        $parameters = explode(', ', \PHPUnit_Util_Class::getMethodParameters($method));
+        $parameters = explode(', ', self::getMethodParameters($method));
 
         foreach ($parameters as $parameter) {
 
@@ -576,7 +576,7 @@ class Generator
      *
      * @param string $file The location of the template file to be used.
      *
-     * @return Text_Template|PHPUnit_Util_Template The template object to create the proxy class.
+     * @return \Text_Template The template object to create the proxy class.
      */
     protected static function createTemplateObject($file)
     {
@@ -631,5 +631,75 @@ class Generator
         }
 
         return $children;
+    }
+
+
+    /**
+     * Returns the parameters of a function or method.
+     *
+     * @param  \ReflectionFunction|\ReflectionMethod $method
+     * @param  boolean                             $forCall
+     * @return string
+     * @since  Method available since Release 3.2.0
+     */
+    public static function getMethodParameters($method, $forCall = FALSE)
+    {
+        $parameters = array();
+
+        foreach ($method->getParameters() as $i => $parameter) {
+            $name = '$' . $parameter->getName();
+
+            /* Note: PHP extensions may use empty names for reference arguments
+             * or "..." for methods taking a variable number of arguments.
+             */
+            if ($name === '$' || $name === '$...') {
+                $name = '$arg' . $i;
+            }
+
+            $default   = '';
+            $reference = '';
+            $typeHint  = '';
+
+            if (!$forCall) {
+                if ($parameter->isArray()) {
+                    $typeHint = 'array ';
+                }
+
+                else if ($parameter->isCallable()) {
+                    $typeHint = 'callable ';
+                }
+
+                else {
+                    try {
+                        $class = $parameter->getClass();
+                    }
+
+                    catch (\ReflectionException $e) {
+                        $class = FALSE;
+                    }
+
+                    if ($class) {
+                        $typeHint = $class->getName() . ' ';
+                    }
+                }
+
+                if ($parameter->isDefaultValueAvailable()) {
+                    $value   = $parameter->getDefaultValue();
+                    $default = ' = ' . var_export($value, TRUE);
+                }
+
+                else if ($parameter->isOptional()) {
+                    $default = ' = null';
+                }
+
+                if ($parameter->isPassedByReference()) {
+                    $reference = '&';
+                }
+            }
+
+            $parameters[] = $typeHint . $reference . $name . $default;
+        }
+
+        return join(', ', $parameters);
     }
 }

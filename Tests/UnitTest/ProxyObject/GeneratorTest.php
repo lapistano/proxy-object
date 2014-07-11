@@ -56,9 +56,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::generate
-     */
     public function testGenerateWithPredefinedProxyName()
     {
         $expected = array(
@@ -87,9 +84,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::generate
-     */
     public function testGenerate()
     {
         $generator = new Generator();
@@ -99,9 +93,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($proxy['namespaceName']);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::generate
-     */
     public function testGenerateProxyFromCache()
     {
         $generator = new Generator();
@@ -112,9 +103,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($actual['namespaceName']);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::getMethodCallParameters
-     */
     public function testGetMethodCallParameters()
     {
         $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
@@ -126,7 +114,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \lapistano\ProxyObject\GeneratorException
-     * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
     public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethod()
     {
@@ -139,9 +126,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::generateProxy
-     */
     public function testGenerateProxyAllProtectedMethods()
     {
         $expected = array(
@@ -155,7 +139,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \lapistano\ProxyObject\GeneratorException
-     * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
     public function testGenerateProxyExpectingPHPUnit_Framework_ExceptionUnableToProxyMethods()
     {
@@ -165,7 +148,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \lapistano\ProxyObject\GeneratorException
      * @dataProvider generateProxyExpectingExceptionDataprovider
-     * @covers \lapistano\ProxyObject\Generator::generateProxy
      */
     public function testGenerateProxyExpectingPHPUnit_Framework_Exception($class, $method)
     {
@@ -174,7 +156,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getArgumentDeclarationDataprovider
-     * @covers \lapistano\ProxyObject\Generator::getArgumentDeclaration
      */
     public function testGetArgumentDeclaration($expected, $method)
     {
@@ -187,7 +168,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getProxiedPropertiesDataprovider
-     * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
      */
     public function testGetProxiedProperties($expected, $className)
     {
@@ -199,9 +179,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
-     */
     public function testGetProxiedPropertiesSelectedProperty()
     {
         $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
@@ -213,9 +190,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
-     */
     public function testGetProxiedPropertiesSelectedStaticProperty()
     {
         $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNSwithStatic');
@@ -230,7 +204,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getProxiedPropertiesExceptionDataprovider
      * @expectedException \lapistano\ProxyObject\GeneratorException
-     * @covers \lapistano\ProxyObject\Generator::getProxiedProperties
      */
     public function testGetProxiedPropertiesExpectingPHPUnit_Framework_Exception($property)
     {
@@ -241,8 +214,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider arrayToStringDataprovider
-     * @covers \lapistano\ProxyObject\Generator::arrayToString
-     * @covers \lapistano\ProxyObject\Generator::traverseStructure
      */
     public function testArrayToString($expected, $array)
     {
@@ -251,7 +222,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider canProxyMethodDataprovider
-     * @covers \lapistano\ProxyObject\Generator::canProxyMethod
      */
     public function testCanProxyMethod($method)
     {
@@ -259,9 +229,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(GeneratorProxy::canProxyMethod($reflected));
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\Generator::canProxyMethods
-     */
     public function testCanProxyMethods()
     {
         $class = new \ReflectionClass('\lapistano\Tests\ProxyObject\DummyNS');
