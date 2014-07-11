@@ -17,5 +17,8 @@
             "email": "lapis@bastian-feder.de",
             "homepage": "http://blog.bastian-feder.de"
         }
-    ]
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "@stable"
+    }
 }
