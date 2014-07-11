@@ -62,9 +62,6 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
     /* Tests
     /*************************************************************************/
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
-     */
     public function testGetProxy()
     {
         $this->assertInstanceOf(
@@ -73,18 +70,12 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
-     */
     public function testGetProxyNoNamespace()
     {
         $proxy = new ProxyBuilder('Dummy');
         $this->assertInstanceOf('Dummy', $proxy->getProxy());
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
-     */
     public function testGetProxyBuilderNamespaced()
     {
         $this->assertInstanceOf(
@@ -93,9 +84,6 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
-     */
     public function testGetProxyWithConstructorArguments()
     {
         $actual = $this->getProxyBuilderObject()
@@ -104,9 +92,6 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\lapistano\Tests\ProxyObject\DummyNS', $actual);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
-     */
     public function testGetProxyByReflection()
     {
         $actual = $this->getProxyBuilderObject()
@@ -115,9 +100,6 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\lapistano\Tests\ProxyObject\DummyNS', $actual);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
-     */
     public function testGetProxyDisableOriginalConstructor()
     {
         $actual = $this->getProxyBuilderObject()
@@ -126,9 +108,6 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\lapistano\Tests\ProxyObject\DummyNS', $actual);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
-     */
     public function testExposeInheritedMember()
     {
         $proxy = new ProxyBuilder('\ExtendsDummy');
@@ -139,19 +118,12 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('Tux', 'Beastie', 'Gnu'), $actual->mascotts);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::__construct
-     */
     public function testConstruct()
     {
         $proxyBuilder = new ProxyBuilder('myProxyObject');
         $this->assertAttributeEquals('myProxyObject', 'className', $proxyBuilder);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
-     * @covers \lapistano\ProxyObject\ProxyBuilder::setMethods
-     */
     public function testGetProxyMethod()
     {
         $proxy = $this->getProxyBuilderObject()
@@ -161,10 +133,6 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('right arm', $proxy->getArm('right'));
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
-     * @covers \lapistano\ProxyObject\ProxyBuilder::setProperties
-     */
     public function testGetProxyProperty()
     {
         $proxy = $this->getProxyBuilderObject()
@@ -175,19 +143,12 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('beastie', $proxy->myPrivate);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getProxy
-     * @covers \lapistano\ProxyObject\ProxyBuilder::setMethods
-     */
     public function testGetProxyNamespacedMethod()
     {
         $proxy = $this->getProxyBuilderObject()->getProxy();
         $this->assertEquals('left arm', $proxy->getArmNS(new \stdClass));
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::setConstructorArgs
-     */
     public function testSetConstructorArgs()
     {
         $args = array('beastie', 'tux');
@@ -199,9 +160,6 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals($args, 'constructorArgs', $actual);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::setProxyClassName
-     */
     public function testSetProxyClassName()
     {
         $classname = 'CustomClassNameProxy';
@@ -212,9 +170,6 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals($classname, 'mockClassName', $actual);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::disableOriginalConstructor
-     */
     public function testDisableOriginalConstructor()
     {
         $proxyBuilder = $this->getProxyBuilderObject('\lapistano\Tests\ProxyObject\DummyNS');
@@ -223,9 +178,6 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeSame(false, 'invokeOriginalConstructor', $proxyBuilder);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::disableAutoload
-     */
     public function testDisableAutoload()
     {
         $proxyBuilder = $this->getProxyBuilderObject('\lapistano\Tests\ProxyObject\DummyNS');
@@ -234,9 +186,6 @@ class ProxyBuilderFunctionalTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeSame(false, 'autoload', $proxyBuilder);
     }
 
-    /**
-     * @covers \lapistano\ProxyObject\ProxyBuilder::getInstanceOf
-     */
     public function testGetInstanceOf()
     {
         $proxyBuilder = new ProxyBuilder('\lapistano\ProxyObject\ProxyBuilder');
