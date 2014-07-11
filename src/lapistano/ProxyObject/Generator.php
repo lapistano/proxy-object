@@ -665,7 +665,7 @@ class Generator
                     $typeHint = 'array ';
                 }
 
-                else if (version_compare(PHP_VERSION, '5.4.0', '<') && $parameter->isCallable()) {
+                else if (version_compare(PHP_VERSION, '5.4.0', '>=') && $parameter->isCallable()) {
                     $typeHint = 'callable ';
                 }
 
