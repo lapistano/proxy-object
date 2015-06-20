@@ -59,7 +59,7 @@ $proxy = new \lapistano\ProxyObject\ProxyBuilder('myClass');
 
 // generate and configure proxied object
 $proxiedObject = $proxy
-    ->setConstructorAgrs(array('Argument1', 'Argument2'))
+    ->setConstructorArgs(array('Argument1', 'Argument2'))
     ->setMethods(array('myMethod'))
     ->getProxy();
 
