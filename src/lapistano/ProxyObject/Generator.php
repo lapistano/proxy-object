@@ -580,7 +580,7 @@ class Generator
      */
     protected static function createTemplateObject($file)
     {
-        include_once('Text/Template.php');
+        @include_once('Text/Template.php');
 
         return new \Text_Template($file);
     }
