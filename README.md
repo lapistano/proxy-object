@@ -1,13 +1,12 @@
-===========
-ProxyObject
-===========
+# ProxyObject
+
 Initiated by Thomas Weinert back in 2008 I picked up his work and completed, extended, and tested it.
 The outcome is this little library making it much easier to generate a proxy of your system under test (SUT).
 Another thought on this library was, that it should be very easy to use if you know the way to mock classes and methods
 in PHPUnit. Proxy-object has almost the same API, but does not change the behavior of the proxied class/method.
 The only purpose is to expose hidden (protected & private) methods and members. 
 
-Current travis status: [![Build Status](https://secure.travis-ci.org/lapistano/proxy-object.png?branch=master)](http://travis-ci.org/lapistano/proxy-object)
+Current travis status: [![Build Status](https://secure.travis-ci.org/lapistano/proxy-object.svg?branch=master)](http://travis-ci.org/lapistano/proxy-object)
 
 Installation
 ============
